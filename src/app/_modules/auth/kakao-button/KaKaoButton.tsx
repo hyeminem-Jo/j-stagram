@@ -10,9 +10,10 @@ const KaKaoButton = () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'kakao',
       options: {
-        redirectTo: process.env.NEXT_PUBLIC_VERCEL_URL
-          ? `${process.env.NEXT_PUBLIC_VERCEL_URL}api/auth/callback`
-          : 'http://localhost:3000/api/auth/callback',
+        redirectTo: 'http://localhost:3000/api/auth/callback',
+        // redirectTo: process.env.NEXT_PUBLIC_VERCEL_URL
+        //   ? `${process.env.NEXT_PUBLIC_VERCEL_URL}api/auth/callback`
+        //   : 'http://localhost:3000/api/auth/callback',
       },
     });
 
