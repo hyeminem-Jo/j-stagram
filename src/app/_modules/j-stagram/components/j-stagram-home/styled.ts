@@ -4,7 +4,7 @@ import { BREAKPOINT_SM } from '@/app/_modules/common/constant/breakpoint';
 export const JStagramHomeContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   gap: 2rem;
   width: 100%;

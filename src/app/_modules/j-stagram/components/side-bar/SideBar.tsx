@@ -13,7 +13,9 @@ const SideBar = () => {
   const pathname = usePathname();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    if (confirm('로그아웃 하시겠습니까?')) {
+      await supabase.auth.signOut();
+    }
   };
 
   return (
@@ -47,8 +49,8 @@ const SideBar = () => {
           )}
         </S.SideBarProfileLink>
       </S.SideBarContent>
-      <S.SideBarLogoutButton>
-        <i className='fa-solid fa-right-from-bracket' onClick={handleLogout}></i>
+      <S.SideBarLogoutButton type='button' onClick={handleLogout} aria-label='로그아웃'>
+        <i className='fa-solid fa-right-from-bracket'></i>
       </S.SideBarLogoutButton>
     </S.SideBarContainer>
   );

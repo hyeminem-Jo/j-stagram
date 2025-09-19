@@ -7,13 +7,42 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
   }
   public: {
     Tables: {
+      images: {
+        Row: {
+          created_at: string | null
+          id: number
+          post_id: number | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          post_id?: number | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          post_id?: number | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "images_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message: {
         Row: {
           created_at: string
@@ -68,6 +97,39 @@ export type Database = {
           release_date?: string
           title?: string
           vote_average?: number
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          content: string
+          created_at: string
+          id: number
+          is_public: boolean
+          like_count: number
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: number
+          is_public: boolean
+          like_count?: number
+          title: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: number
+          is_public?: boolean
+          like_count?: number
+          title?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }

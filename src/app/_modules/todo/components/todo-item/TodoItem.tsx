@@ -21,7 +21,7 @@ const TodoItem = ({
   isNewlyCreated?: boolean;
   onEditComplete?: () => void;
 }) => {
-  const [isEdit, setIsEdit] = useState(isNewlyCreated);
+  const [isEdit, setIsEdit] = useState(isNewlyCreated); // 편집 모드 여부
   const [isCompleted, setIsCompleted] = useState(todo?.completed ?? false);
   const [todoTitle, setTodoTitle] = useState(todo?.title ?? '');
   const [selectedDate, setSelectedDate] = useState<Date | null>(
