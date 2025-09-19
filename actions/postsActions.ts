@@ -1,6 +1,6 @@
 'use server';
 
-import { createServerSupabaseClient } from 'utils/supabase/server';
+import { createServerSupabaseAdminClient, createServerSupabaseClient } from 'utils/supabase/server';
 import { Database } from 'types_db';
 import { handleError } from './actionUtils';
 
@@ -8,29 +8,36 @@ export type PostRow = Database['public']['Tables']['posts']['Row'];
 export type PostRowInsert = Database['public']['Tables']['posts']['Insert'];
 export type PostRowUpdate = Database['public']['Tables']['posts']['Update'];
 
-// export async function getPosts({ searchInput = '' }): Promise<PostRow[]> {
-//   const supabase = await createServerSupabaseClient();
-//   const { data, error } = await supabase
-//     .from('posts')
-//     .select('*') // 모든 필드 선택
-//     .eq('is_public', true) // 공개된 게시글만 가져오기
-//     .like('title', `%${searchInput}%`) // 검색된 게시글 찾기, 빈값이면 전체 게시글 찾기
-//     .order('created_at', { ascending: true }); // 생성일 기준 오름차순 정렬
+// 이미지가 포함된 게시글 타입
+export type PostWithImages = {
+  id: number;
+  title: string;
+  content: string;
+  images: { url: string }[];
+  user_id: string;
+  created_at: string;
+  user_info?: {
+    email?: string;
+    user_metadata?: {
+      preferred_username?: string;
+      name?: string;
+      avatar_url?: string;
+    };
+  } | null;
+};
 
-//   if (error) handleError(error);
-//   return data;
-// }
-
-export async function getPosts({ searchInput = '' }): Promise<PostRow[]> {
+export async function getPosts({ searchInput = '' }): Promise<PostWithImages[]> {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error } = await supabase
+  const { data: posts, error } = await supabase
     .from('posts')
     .select(
       `
       id,
       title,
       content,
+      user_id,
+      created_at,
       images (url)
     `,
     ) // posts + 연결된 images 배열 가져오기
@@ -40,10 +47,27 @@ export async function getPosts({ searchInput = '' }): Promise<PostRow[]> {
 
   if (error) handleError(error);
 
-  // images 배열이 항상 존재하게 하고 싶으면 null 처리
-  return data.map((post) => ({
+  // Admin client 사용 (service_role)
+  const supabaseAdmin = await createServerSupabaseAdminClient();
+  const { data: allUsers, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
+
+  if (usersError) handleError(usersError);
+
+  // 유저 매핑
+  const userMap = new Map(
+    allUsers.users.map((u) => [
+      u.id,
+      {
+        email: u.email,
+        user_metadata: u.user_metadata,
+      },
+    ]),
+  );
+
+  return posts.map((post) => ({
     ...post,
     images: post.images ?? [],
+    user_info: userMap.get(post.user_id) ?? null,
   }));
 }
 

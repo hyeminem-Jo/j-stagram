@@ -16,11 +16,15 @@ const JStagramMyPage = () => {
         <S.JStagramMyPageTitle>My Info</S.JStagramMyPageTitle>
         <S.JStagramMyPageTitle>_</S.JStagramMyPageTitle>
         <S.JStagramMyInfoList>
-          {(myInfo?.user_metadata?.preferred_username || myInfo?.user_metadata?.name) && (
+          {(myInfo?.user_metadata?.preferred_username ||
+            myInfo?.user_metadata?.name ||
+            myInfo?.email) && (
             <S.JStagramMyInfoItem>
               <S.JStagramMyInfoItemTitle>Name: </S.JStagramMyInfoItemTitle>
               <S.JStagramMyInfoItemValue>
-                {myInfo?.user_metadata?.preferred_username || myInfo?.user_metadata?.name}
+                {myInfo?.user_metadata?.preferred_username ||
+                  myInfo?.user_metadata?.name ||
+                  myInfo?.email?.split('@')[0]}
               </S.JStagramMyInfoItemValue>
             </S.JStagramMyInfoItem>
           )}
