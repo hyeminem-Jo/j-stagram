@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from 'utils/supabase/server';
 import AuthProvider from '@/app/config/AuthProvider';
 import { MyInfo } from '@/app/types/commonType';
-import JStagramAuthGate from '@/app/_modules/j-stagram/components/j-stagram-container/JStagramAuthGate';
+import JStagramAuthGate from '@/app/_modules/j-stagram/components/container/JStagramAuthGate';
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createServerSupabaseClient();

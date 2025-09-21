@@ -1,4 +1,4 @@
-import JStagramSearch from '@/app/_modules/j-stagram/components/j-stagram-search/JStagramSearch';
+import JStagramSearch from '@/app/_modules/j-stagram/components/search/JStagramSearch';
 
 const SearchPage = () => {
   return <JStagramSearch />;

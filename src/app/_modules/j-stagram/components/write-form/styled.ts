@@ -3,7 +3,6 @@ import { BREAKPOINT_SM } from '@/app/_modules/common/constant/breakpoint';
 
 export const JStagramFeedContainer = styled.div`
   width: 50rem;
-  margin-bottom: 2rem;
   border-radius: 1rem;
   border: 1px solid #dbdbdb;
   background: white;
@@ -12,10 +11,15 @@ export const JStagramFeedContainer = styled.div`
 
   @media (max-width: ${BREAKPOINT_SM}px) {
     width: 100%;
-    margin-bottom: 1rem;
-    border-radius: 0;
     border-left: none;
     border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    &:first-child {
+      border-top: none;
+    }
   }
 `;
 
@@ -24,7 +28,7 @@ export const FeedHeader = styled.div`
   padding-bottom: 0;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
-    padding: 0.8rem 1rem;
+    padding: 1.2rem;
   }
 `;
 
@@ -36,15 +40,30 @@ export const UserProfileSection = styled.div`
 
 export const UserInfo = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  width: 100%;
+  gap: 1.4rem;
+  align-items: center;
 `;
 
 export const Username = styled.span`
+  position: relative;
   font-size: 1.6rem;
   font-weight: 600;
   color: #262626;
   line-height: 1.2;
+
+  &::after {
+    position: absolute;
+    top: 50%;
+    right: -0.8rem;
+    display: block;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background-color: #8e8e8e;
+    transform: translateY(-50%);
+    content: '';
+  }
 `;
 
 export const PostDate = styled.span`
@@ -55,17 +74,21 @@ export const PostDate = styled.span`
 
 export const FeedImageWrap = styled.div`
   width: 100%;
-  /* height: 400px; */
   padding: 1.5rem;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
-    /* height: 300px; */
+    padding: 0;
   }
 `;
 
 export const ImageSliderContainer = styled.div`
   position: relative;
-  border: 1px solid blue;
+  aspect-ratio: 1 / 1;
+
+  .slick-list {
+    aspect-ratio: 1 / 1;
+    height: 100% !important;
+  }
 
   .slick-dots {
     bottom: 15px;
@@ -111,16 +134,19 @@ export const SlideImageWrapper = styled.div`
 `;
 
 export const SlideImage = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 `;
 
 export const FeedContent = styled.div`
-  padding: 1.5rem;
+  padding: 1.7rem;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
-    padding: 1rem;
+    padding: 1.5rem;
   }
 `;
 
@@ -134,7 +160,7 @@ export const FeedTitle = styled.h3`
 
 export const FeedDescription = styled.p`
   font-size: 1.5rem;
-  color: #8e8e8e;
+  color: #222;
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-all;

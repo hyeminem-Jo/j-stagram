@@ -1,4 +1,4 @@
-import JStagramMessage from '@/app/_modules/j-stagram/components/j-stagram-message/JStagramMessage';
+import JStagramMessage from '@/app/_modules/j-stagram/components/message/JStagramMessage';
 
 const MessagePage = () => {
   return <JStagramMessage />;

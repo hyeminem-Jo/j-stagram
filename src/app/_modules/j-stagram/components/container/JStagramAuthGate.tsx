@@ -1,7 +1,7 @@
 'use client';
 
 import AuthContainer from '@/app/_modules/auth/auth-container/AuthContainer';
-import JStagramContainer from '@/app/_modules/j-stagram/components/j-stagram-container/JStagramContainer';
+import JStagramContainer from '@/app/_modules/j-stagram/components/container/JStagramContainer';
 import { MyInfo } from '@/app/types/commonType';
 
 export default function JStagramAuthGate({

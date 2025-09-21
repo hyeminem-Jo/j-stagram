@@ -6,7 +6,7 @@ import { myInfoState } from '@/app/store';
 import { useAtom } from 'jotai';
 import Loading from '@/app/_modules/common/components/loading/Loading';
 import { createBrowserSupabaseClient } from 'utils/supabase/client';
-import JStagramFeedList from '../j-stagram-feed-list/JStagramFeedList';
+import JStagramFeedList from '../feed-list/JStagramFeedList';
 
 const JStagramHome = () => {
   const [myInfo] = useAtom(myInfoState);
