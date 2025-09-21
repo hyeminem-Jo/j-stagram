@@ -1,9 +1,9 @@
 'use client';
 
 import * as S from './styled';
-import Input from '@/app/_modules/common/components/form/input/Input';
 import Button from '@/app/_modules/common/components/button/button/Button';
-import { useForm, Controller } from 'react-hook-form';
+import ControlledInput from '@/app/_modules/common/components/form/controlled-input/ControlledInput';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { createBrowserSupabaseClient } from 'utils/supabase/client';
@@ -59,37 +59,19 @@ const SignInForm = () => {
 
   return (
     <S.SignInFormWrap onSubmit={handleSubmit(onSubmit)}>
-      <Controller
+      <ControlledInput
         name='email'
         control={control}
-        render={({ field }) => (
-          <Input
-            id='email'
-            placeholder='이메일을 입력하세요.'
-            value={field.value}
-            onChange={field.onChange}
-            onBlur={field.onBlur}
-            inputRef={field.ref}
-            error={errors.email?.message}
-          />
-        )}
+        placeholder='이메일을 입력하세요.'
+        error={errors.email}
       />
-      <Controller
+      <ControlledInput
         name='password'
         control={control}
-        render={({ field }) => (
-          <Input
-            id='password'
-            maxLength={12}
-            placeholder='비밀번호를 입력하세요.'
-            value={field.value}
-            onChange={field.onChange}
-            onBlur={field.onBlur}
-            inputRef={field.ref}
-            type='password'
-            error={errors.password?.message}
-          />
-        )}
+        placeholder='비밀번호를 입력하세요.'
+        type='password'
+        maxLength={12}
+        error={errors.password}
       />
       <Button
         type='submit'
