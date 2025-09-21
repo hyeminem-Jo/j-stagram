@@ -3,6 +3,7 @@ import { BREAKPOINT_SM } from '@/app/_modules/common/constant/breakpoint';
 
 export const StyledPostForm = styled.form`
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: 1rem;
   width: 50rem;
@@ -10,12 +11,17 @@ export const StyledPostForm = styled.form`
   margin-bottom: 2rem;
 
   & > div {
-    flex: 1;
+    width: 100%;
   }
 
   @media (max-width: ${BREAKPOINT_SM}px) {
+    flex-direction: row;
     gap: 0.5rem;
     width: 100%;
     padding: 0 1.5rem;
+
+    & > div {
+      flex: 1;
+    }
   }
 `;

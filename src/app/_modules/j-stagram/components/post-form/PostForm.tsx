@@ -68,7 +68,7 @@ const JStagramFeedList = () => {
         name='postInput'
         rows={4}
         control={control}
-        placeholder='게시글을 입력하세요.'
+        placeholder='오늘은 어떤 일이 있었나요? :)'
         error={errors.postInput}
       />
       <Button
