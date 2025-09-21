@@ -5,7 +5,7 @@ import Button from '@/app/_modules/common/components/button/button/Button';
 import { myInfoState } from '@/app/store';
 import { useAtom } from 'jotai';
 import Loading from '@/app/_modules/common/components/loading/Loading';
-import { createPost, getPosts, PostRow } from 'actions/postsActions';
+import { createPost, getPosts, PostWithImages } from 'actions/postsActions';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import JStagramFeed from '../feed/JStagramFeed';
@@ -86,7 +86,7 @@ const JStagramFeedList = () => {
 
       {postsQuery.isLoading && <Loading />}
       {postsQuery.data &&
-        postsQuery.data.map((post: PostRow) => <JStagramFeed key={post.id} post={post} />)}
+        postsQuery.data.map((post: PostWithImages) => <JStagramFeed key={post.id} post={post} />)}
       {postsQuery?.data && (
         <Button
           text='추가하기'
