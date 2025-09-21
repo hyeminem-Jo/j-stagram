@@ -7,8 +7,9 @@ import { useAtom } from 'jotai';
 import Loading from '@/app/_modules/common/components/loading/Loading';
 import { createBrowserSupabaseClient } from 'utils/supabase/client';
 import JStagramFeedList from '../feed-list/JStagramFeedList';
+import PostForm from '../post-form/PostForm';
 
-const JStagramHome = () => {
+const JStagramMain = () => {
   const [myInfo] = useAtom(myInfoState);
   const supabase = createBrowserSupabaseClient();
 
@@ -17,10 +18,10 @@ const JStagramHome = () => {
   };
 
   return (
-    <S.JStagramHomeContainer>
+    <S.JStagramMainContainer>
       {myInfo?.email ? (
         <>
-          <S.JStagramHomeDesc>
+          {/* <S.JStagramHomeDesc>
             <S.JStagramHomeGreeting>
               Hello{' '}
               <S.JStagramHomeMyName>
@@ -32,14 +33,15 @@ const JStagramHome = () => {
             </S.JStagramHomeGreeting>
             <span>J-stagram 에 방문하신 것을 환영합니다 &#58;&#41;</span>
           </S.JStagramHomeDesc>
-          <Button text='로그아웃' filled onClick={handleLogout} />
+          <Button text='로그아웃' filled onClick={handleLogout} /> */}
+          <PostForm />
           <JStagramFeedList />
         </>
       ) : (
         <Loading />
       )}
-    </S.JStagramHomeContainer>
+    </S.JStagramMainContainer>
   );
 };
 
-export default JStagramHome;
+export default JStagramMain;

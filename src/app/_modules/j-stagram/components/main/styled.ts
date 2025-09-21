@@ -1,19 +1,19 @@
 import styled from '@emotion/styled';
 import { BREAKPOINT_SM } from '@/app/_modules/common/constant/breakpoint';
 
-export const JStagramHomeContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  /* justify-content: center; */
-  align-items: center;
-  gap: 2rem;
-  width: 100%;
-  height: 100dvh;
+export const JStagramMainContainer = styled.div`
+  padding: 5rem 0 10rem;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
-    gap: 1.5rem;
-    height: calc(100dvh - 8rem);
+    /* gap: 1.5rem; */
   }
+`;
+
+export const StyledJStagramMain = styled.main`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 50rem;
 `;
 
 export const JStagramHomeDesc = styled.div`

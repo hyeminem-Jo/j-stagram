@@ -43,7 +43,7 @@ export async function getPosts({ searchInput = '' }): Promise<PostWithImages[]> 
     ) // posts + 연결된 images 배열 가져오기
     .eq('is_public', true)
     .like('title', `%${searchInput}%`)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: false }); // 최신순으로 불러오기
 
   if (error) handleError(error);
 
