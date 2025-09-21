@@ -7,11 +7,11 @@ import { useAtom } from 'jotai';
 import Loading from '@/app/_modules/common/components/loading/Loading';
 import { createPost, getPosts, PostWithImages } from 'actions/postsActions';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import ControlledInput from '@/app/_modules/common/components/form/controlled-input/ControlledInput';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import DateUtil from '@/app/_modules/common/utils/dateUtil';
+import ControlledTextarea from '@/app/_modules/common/components/form/controlled-textarea/ControlledTextarea';
 
 const schema = z.object({
   postInput: z.string().min(1, '게시글을 입력해주세요.'),
@@ -24,6 +24,7 @@ const JStagramFeedList = () => {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -49,6 +50,7 @@ const JStagramFeedList = () => {
     },
     onSuccess: (newPost) => {
       postsQuery.refetch();
+      reset();
     },
     onError: (error: Error) => {
       alert(error.message);
@@ -62,8 +64,9 @@ const JStagramFeedList = () => {
 
   return (
     <S.StyledPostForm onSubmit={handleSubmit(onSubmit)}>
-      <ControlledInput
+      <ControlledTextarea
         name='postInput'
+        rows={4}
         control={control}
         placeholder='게시글을 입력하세요.'
         error={errors.postInput}

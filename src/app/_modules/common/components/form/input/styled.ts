@@ -34,6 +34,7 @@ export const Input = styled.input<StyleProps>`
   padding: 1.3rem 1.6rem;
   padding-right: 5rem;
   color: ${({ $color }) => ($color === 'white' ? '#000' : '#fff')};
+  transition: border-color 0.1s ease;
 
   &:focus {
     border-color: ${({ $color }) => ($color === 'white' ? '#222' : '#fff')};
