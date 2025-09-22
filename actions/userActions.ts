@@ -9,6 +9,7 @@ export type UserInfo = {
   phone: string;
   created_at: string;
   last_sign_in_at: string;
+  like_count: number;
   user_metadata: {
     preferred_username?: string;
     name?: string;
@@ -25,6 +26,7 @@ function transformUserToUserInfo(user: any): UserInfo {
     phone: user.phone || '',
     created_at: user.created_at,
     last_sign_in_at: user.last_sign_in_at,
+    like_count: user.like_count || 0,
     user_metadata: user.user_metadata || {},
   };
 }

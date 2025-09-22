@@ -16,6 +16,7 @@ export type PostWithImages = {
   images: { url: string }[];
   user_id: string;
   created_at: string;
+  like_count: number;
   user_info?: {
     email?: string;
     user_metadata?: {
@@ -25,6 +26,35 @@ export type PostWithImages = {
     };
   } | null;
 };
+
+// 사용자 정보 매핑
+async function getUsersMap() {
+  const supabaseAdmin = await createServerSupabaseAdminClient();
+  const { data: allUsers, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
+
+  if (usersError) handleError(usersError);
+
+  return new Map(
+    allUsers.users.map((u) => [
+      u.id,
+      {
+        email: u.email,
+        user_metadata: u.user_metadata,
+      },
+    ]),
+  );
+}
+
+// 게시물 - 사용자 매핑
+async function mapPostsWithUserInfo(posts: any[]): Promise<PostWithImages[]> {
+  const userMap = await getUsersMap();
+
+  return posts.map((post) => ({
+    ...post,
+    images: post.images ?? [],
+    user_info: userMap.get(post.user_id) ?? null,
+  }));
+}
 
 export async function getPosts({ searchInput = '' }): Promise<PostWithImages[]> {
   const supabase = await createServerSupabaseClient();
@@ -38,6 +68,7 @@ export async function getPosts({ searchInput = '' }): Promise<PostWithImages[]> 
       content,
       user_id,
       created_at,
+      like_count,
       images (url)
     `,
     ) // posts + 연결된 images 배열 가져오기
@@ -47,28 +78,7 @@ export async function getPosts({ searchInput = '' }): Promise<PostWithImages[]> 
 
   if (error) handleError(error);
 
-  // Admin client 사용 (service_role)
-  const supabaseAdmin = await createServerSupabaseAdminClient();
-  const { data: allUsers, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
-
-  if (usersError) handleError(usersError);
-
-  // 유저 매핑
-  const userMap = new Map(
-    allUsers.users.map((u) => [
-      u.id,
-      {
-        email: u.email,
-        user_metadata: u.user_metadata,
-      },
-    ]),
-  );
-
-  return posts.map((post) => ({
-    ...post,
-    images: post.images ?? [],
-    user_info: userMap.get(post.user_id) ?? null,
-  }));
+  return await mapPostsWithUserInfo(posts);
 }
 
 export async function createPost(post: PostRowInsert) {
@@ -103,4 +113,29 @@ export async function deletePost(postId: number) {
   const { data, error } = await supabase.from('posts').delete().eq('id', postId);
   if (error) handleError(error);
   return data;
+}
+
+export async function getPostsByUserId(userId: string): Promise<PostWithImages[]> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data: posts, error } = await supabase
+    .from('posts')
+    .select(
+      `
+      id,
+      title,
+      content,
+      user_id,
+      created_at,
+      like_count,
+      images (url)
+    `,
+    )
+    .eq('user_id', userId)
+    .eq('is_public', true)
+    .order('created_at', { ascending: false });
+
+  if (error) handleError(error);
+
+  return await mapPostsWithUserInfo(posts);
 }
