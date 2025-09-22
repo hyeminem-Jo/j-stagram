@@ -32,9 +32,9 @@ const SideBar = () => {
           <i className='fa-solid fa-paper-plane'></i>
         </S.SideBarLink>
         <S.SideBarProfileLink
-          href='/j-stagram/my-page'
+          href={`/j-stagram/${myInfo?.id}`}
           $hasImage={!!myInfo?.user_metadata?.avatar_url}
-          $isActive={pathname === '/j-stagram/my-page'}
+          $isActive={pathname === `/j-stagram/${myInfo?.id}`}
         >
           {myInfo?.user_metadata?.avatar_url ? (
             <Image

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { BREAKPOINT } from '@/app/_modules/common/constant/breakpoint';
+import Link from 'next/link';
 
 interface Props {
   $hasImage: boolean;
@@ -8,7 +9,9 @@ interface Props {
   $mobileSize: number;
 }
 
-export const ProfileImage = styled.div<Props>`
+export const ProfileImage = styled(Link, {
+  shouldForwardProp: (prop) => !prop.startsWith('$'),
+})<Props>`
   position: relative;
   width: ${({ $size }) => `${$size}rem`};
   aspect-ratio: 1/1;

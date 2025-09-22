@@ -3,9 +3,10 @@
 import { MyInfo } from '@/app/types/commonType';
 import * as S from './styled';
 import Image from 'next/image';
+import { UserInfo } from 'actions/userActions';
 
 interface UserProfileImageProps {
-  user: MyInfo;
+  user: MyInfo | UserInfo;
   size?: number;
   mobileSize?: number;
 }
@@ -13,6 +14,7 @@ interface UserProfileImageProps {
 const UserProfileImage = ({ user, size = 30, mobileSize }: UserProfileImageProps) => {
   return (
     <S.ProfileImage
+      href={`/j-stagram/${user?.id}`}
       $hasImage={!!user?.user_metadata?.avatar_url}
       $size={size / 10}
       $mobileSize={mobileSize / 10 || size / 10}
