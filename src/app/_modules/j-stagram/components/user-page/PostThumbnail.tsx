@@ -18,7 +18,7 @@ const PostThumbnail = ({ post }: PostThumbnailProps) => {
       ) : (
         <S.PostThumbnailTextContainer>
           <S.PostThumbnailDate>{DateUtil.format(post.created_at)}</S.PostThumbnailDate>
-          <S.PostThumbnailText>{post.content}</S.PostThumbnailText>
+          <S.PostThumbnailText>{post.title}</S.PostThumbnailText>
         </S.PostThumbnailTextContainer>
       )}
       <S.PostThumbnailOverlay className='overlay'>

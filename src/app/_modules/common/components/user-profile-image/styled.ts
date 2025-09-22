@@ -13,6 +13,7 @@ export const ProfileImage = styled(Link, {
   shouldForwardProp: (prop) => !prop.startsWith('$'),
 })<Props>`
   position: relative;
+  display: flex;
   width: ${({ $size }) => `${$size}rem`};
   aspect-ratio: 1/1;
   border-radius: 50%;
@@ -27,7 +28,6 @@ export const ProfileImage = styled(Link, {
   ${({ $hasImage, $size }) =>
     !$hasImage &&
     css`
-      display: flex;
       align-items: center;
       justify-content: center;
       background-color: #e5e5e5;
