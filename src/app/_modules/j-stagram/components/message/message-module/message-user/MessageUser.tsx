@@ -3,12 +3,8 @@
 import DateUtil from '@/app/_modules/common/utils/dateUtil';
 
 import * as S from './styled';
-import dynamic from 'next/dynamic';
+import UserProfileImage from '@/app/_modules/common/components/user-profile-image/UserProfileImage';
 
-const UserProfileImage = dynamic(
-  () => import('@/app/_modules/common/components/user-profile-image/UserProfileImage'),
-  { ssr: false },
-);
 import { MyInfo } from '@/app/types/commonType';
 
 interface MessageUserProps {
