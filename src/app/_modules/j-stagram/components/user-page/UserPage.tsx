@@ -6,15 +6,15 @@ import { useAtomValue } from 'jotai';
 import DateUtil from '@/app/_modules/common/utils/dateUtil';
 import UserProfileImage from '@/app/_modules/common/components/user-profile-image/UserProfileImage';
 
-const JStagramMyPage = () => {
+const UserPage = () => {
   const myInfo = useAtomValue(myInfoState);
 
   return (
-    <S.JStagramMyPageContainer>
+    <S.UserPageContainer>
       <UserProfileImage user={myInfo} size={300} mobileSize={200} />
       <div>
-        <S.JStagramMyPageTitle>My Info</S.JStagramMyPageTitle>
-        <S.JStagramMyPageTitle>_</S.JStagramMyPageTitle>
+        <S.UserPageTitle>User Info</S.UserPageTitle>
+        <S.UserPageTitle>_</S.UserPageTitle>
         <S.JStagramMyInfoList>
           {(myInfo?.user_metadata?.preferred_username ||
             myInfo?.user_metadata?.name ||
@@ -46,8 +46,8 @@ const JStagramMyPage = () => {
           </S.JStagramMyInfoItem>
         </S.JStagramMyInfoList>
       </div>
-    </S.JStagramMyPageContainer>
+    </S.UserPageContainer>
   );
 };
 
-export default JStagramMyPage;
+export default UserPage;

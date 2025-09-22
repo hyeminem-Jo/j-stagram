@@ -1,7 +1,7 @@
-import JStagramMyPage from '@/app/_modules/j-stagram/components/my-page/JStagramMyPage';
+import UserPage from '@/app/_modules/j-stagram/components/user-page/UserPage';
 
 const MyPage = () => {
-  return <JStagramMyPage />;
+  return <UserPage />;
 };
 
 export default MyPage;

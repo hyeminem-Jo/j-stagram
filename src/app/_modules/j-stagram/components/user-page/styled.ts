@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { BREAKPOINT } from '@/app/_modules/common/constant/breakpoint';
 
-export const JStagramMyPageContainer = styled.div`
+export const UserPageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,7 +15,7 @@ export const JStagramMyPageContainer = styled.div`
   }
 `;
 
-export const JStagramMyPageTitle = styled.h2`
+export const UserPageTitle = styled.h2`
   font-size: 3rem;
   font-weight: bold;
   margin-bottom: 1rem;
