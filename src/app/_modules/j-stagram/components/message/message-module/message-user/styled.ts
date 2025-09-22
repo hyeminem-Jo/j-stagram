@@ -6,6 +6,7 @@ type MessageUserContainerProps = {
   $active?: boolean;
   $isChat?: boolean;
   $isOnline?: boolean;
+  isChat?: boolean;
 };
 
 export const MessageUserContainer = styled.button<MessageUserContainerProps>`
@@ -55,6 +56,12 @@ export const MessageUserContainer = styled.button<MessageUserContainerProps>`
 export const MessageUserImageWrap = styled.div<MessageUserContainerProps>`
   position: relative;
   border-radius: 50%;
+
+  ${({ isChat }) =>
+    !isChat &&
+    css`
+      pointer-events: none;
+    `}
 
   ${({ $isOnline }) =>
     $isOnline &&

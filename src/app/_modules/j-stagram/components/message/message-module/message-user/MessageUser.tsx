@@ -18,7 +18,7 @@ interface MessageUserProps {
 const MessageUser = ({ user, onlineAt, isChat, active, onClick }: MessageUserProps) => {
   return (
     <S.MessageUserContainer $active={active} $isChat={isChat} onClick={onClick}>
-      <S.MessageUserImageWrap $isOnline={!!onlineAt}>
+      <S.MessageUserImageWrap $isOnline={!!onlineAt} isChat={isChat}>
         <UserProfileImage user={user} size={40} mobileSize={!isChat ? 45 : 40} />
       </S.MessageUserImageWrap>
       <S.MessageUserInfo $isChat={isChat}>
