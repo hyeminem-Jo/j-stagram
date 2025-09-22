@@ -9,6 +9,7 @@ type MessageUserContainerProps = {
 };
 
 export const MessageUserContainer = styled.button<MessageUserContainerProps>`
+  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
@@ -18,17 +19,17 @@ export const MessageUserContainer = styled.button<MessageUserContainerProps>`
   background-color: ${({ $active }) => ($active ? '#e6f2ff' : 'transparent')};
 
   ${({ $isChat }) =>
-    $isChat &&
-    css`
-      width: 100%;
-      background-color: #f5f5f5;
-      pointer-events: none;
-      cursor: default;
-    `}
-
-  &:hover {
-    background-color: #e6f2ff;
-  }
+    $isChat
+      ? css`
+          width: 100%;
+          background-color: #f5f5f5;
+          cursor: default;
+        `
+      : css`
+          &:hover {
+            background-color: #e6f2ff;
+          }
+        `}
 
   img {
     border-radius: 50%;

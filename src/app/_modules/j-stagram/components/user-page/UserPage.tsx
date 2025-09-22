@@ -53,7 +53,7 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
       <S.UserPostsSection>
         <S.UserPostsTitle>Posts ({userPosts.length})</S.UserPostsTitle>
         {isLoading ? (
-          <S.EmptyPostsMessage>게시물을 불러오는 중...</S.EmptyPostsMessage>
+          <S.EmptyPostsMessage>게시물을 불러오는 중...✨</S.EmptyPostsMessage>
         ) : userPosts.length > 0 ? (
           <S.PostsGrid>
             {userPosts.map((post) => (
@@ -61,7 +61,7 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
             ))}
           </S.PostsGrid>
         ) : (
-          <S.EmptyPostsMessage>아직 게시물이 없습니다.</S.EmptyPostsMessage>
+          <S.EmptyPostsMessage>아직 게시물이 없습니다. 🙁</S.EmptyPostsMessage>
         )}
       </S.UserPostsSection>
     </S.UserPageContainer>
