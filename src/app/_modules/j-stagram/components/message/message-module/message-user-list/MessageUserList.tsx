@@ -11,9 +11,12 @@ import { getAllUserList } from 'actions/messageActions';
 import { myInfoState, presenceState } from '@/app/store';
 import { useEffect } from 'react';
 import { MyInfo } from '@/app/types/commonType';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const MessageUserList = () => {
   const supabase = createBrowserSupabaseClient();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedUserId, setSelectedUserId] = useAtom(selectedChatUserIdState);
   const [myInfo] = useAtom(myInfoState);
   const [presence, setPresence] = useAtom(presenceState);
@@ -24,6 +27,22 @@ const MessageUserList = () => {
   });
 
   const filteredUsers = getAllUserQuery.data?.filter((user) => user.id !== myInfo?.id) || [];
+
+  // URL 파라미터와 selectedUserId 동기화
+  useEffect(() => {
+    const userIdFromUrl = searchParams.get('userId');
+    if (userIdFromUrl && userIdFromUrl !== selectedUserId) {
+      setSelectedUserId(userIdFromUrl);
+    }
+  }, [searchParams, selectedUserId, setSelectedUserId]);
+
+  // selectedUserId가 변경될 때 URL 업데이트
+  const handleUserSelect = (userId: string) => {
+    setSelectedUserId(userId);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('userId', userId);
+    router.push(`?${newSearchParams.toString()}`, { scroll: false });
+  };
 
   useEffect(() => {
     if (!myInfo?.id) return;
@@ -72,7 +91,7 @@ const MessageUserList = () => {
           <MessageUser
             key={user.id}
             user={user as unknown as MyInfo}
-            onClick={() => setSelectedUserId(user.id)}
+            onClick={() => handleUserSelect(user.id)}
             active={selectedUserId === user.id}
             onlineAt={(() => {
               const userPresence = presence?.[user.id];

@@ -10,10 +10,11 @@ import { MyInfo } from '@/app/types/commonType';
 import { useQuery } from '@tanstack/react-query';
 import { getPostsByUserId } from 'actions/postsActions';
 import PostThumbnail from './PostThumbnail';
+import { useIsMobile } from '@/app/_modules/common/hooks/useIsMobile';
 
 const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
   const myInfo = useAtomValue(myInfoState);
-
+  const isMobile = useIsMobile();
   const { data: userPosts = [], isLoading } = useQuery({
     queryKey: ['userPosts', user.id],
     queryFn: () => getPostsByUserId(user.id),
@@ -22,32 +23,40 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
   return (
     <S.UserPageContainer>
       <S.UserPageHeader>
-        <UserProfileImage user={user} size={160} mobileSize={130} />
-        <S.UserInfo>
-          {(user?.user_metadata?.preferred_username ||
-            user?.user_metadata?.name ||
-            user?.email) && (
-            <S.UserInfoItem>
+        {!isMobile && <UserProfileImage user={user} size={160} />}
+        <S.UserPageHeaderInner>
+          {isMobile && <UserProfileImage user={user} size={80} />}
+          <S.UserNameAndMessageButton>
+            {(user?.user_metadata?.preferred_username ||
+              user?.user_metadata?.name ||
+              user?.email) && (
               <S.UserInfoName>
                 {user?.user_metadata?.preferred_username ||
                   user?.user_metadata?.name ||
                   user?.email?.split('@')[0]}
               </S.UserInfoName>
+            )}
+            {myInfo?.id !== user?.id && (
+              <S.MessageButton href={`/j-stagram/message?userId=${user.id}`}>
+                메시지 보내기
+              </S.MessageButton>
+            )}
+          </S.UserNameAndMessageButton>
+          <S.UserInfo>
+            <S.UserInfoItem>
+              <S.UserInfoItemTitle>Email </S.UserInfoItemTitle>
+              <S.UserInfoItemValue>{user?.email}</S.UserInfoItemValue>
             </S.UserInfoItem>
-          )}
-          <S.UserInfoItem>
-            <S.UserInfoItemTitle>Email </S.UserInfoItemTitle>
-            <S.UserInfoItemValue>{user?.email}</S.UserInfoItemValue>
-          </S.UserInfoItem>
-          <S.UserInfoItem>
-            <S.UserInfoItemTitle>생성일 </S.UserInfoItemTitle>
-            <S.UserInfoItemValue>{DateUtil.format(user?.created_at)}</S.UserInfoItemValue>
-          </S.UserInfoItem>
-          <S.UserInfoItem>
-            <S.UserInfoItemTitle>마지막 접속일 </S.UserInfoItemTitle>
-            <S.UserInfoItemValue>{DateUtil.format(user?.last_sign_in_at)}</S.UserInfoItemValue>
-          </S.UserInfoItem>
-        </S.UserInfo>
+            <S.UserInfoItem>
+              <S.UserInfoItemTitle>생성일 </S.UserInfoItemTitle>
+              <S.UserInfoItemValue>{DateUtil.format(user?.created_at)}</S.UserInfoItemValue>
+            </S.UserInfoItem>
+            <S.UserInfoItem>
+              <S.UserInfoItemTitle>마지막 접속일 </S.UserInfoItemTitle>
+              <S.UserInfoItemValue>{DateUtil.format(user?.last_sign_in_at)}</S.UserInfoItemValue>
+            </S.UserInfoItem>
+          </S.UserInfo>
+        </S.UserPageHeaderInner>
       </S.UserPageHeader>
 
       <S.UserPostsSection>

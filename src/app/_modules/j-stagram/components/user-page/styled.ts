@@ -1,11 +1,13 @@
 import styled from '@emotion/styled';
 import { BREAKPOINT } from '@/app/_modules/common/constant/breakpoint';
+import Link from 'next/link';
 
 export const UserPageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 3rem;
   min-height: 100dvh;
   padding: 6rem 0 15rem;
@@ -14,6 +16,7 @@ export const UserPageContainer = styled.div`
     min-height: calc(100dvh - 6rem);
     gap: 2rem;
     padding: 3rem 0;
+    justify-content: flex-start;
   }
 `;
 
@@ -29,26 +32,60 @@ export const UserPageHeader = styled.div`
   @media (max-width: ${BREAKPOINT}px) {
     gap: 2rem;
     justify-content: center;
+    align-items: flex-start;
   }
 `;
 
-export const UserInfo = styled.ul`
+export const UserPageHeaderInner = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: 3rem;
+  flex: 1;
+
+  @media (max-width: ${BREAKPOINT}px) {
+    gap: 2rem;
+  }
+`;
+
+export const UserNameAndMessageButton = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+
+  a {
+    margin-top: 0;
+  }
+
+  @media (max-width: ${BREAKPOINT}px) {
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+`;
+
+export const UserInfo = styled.div`
+  display: flex;
+  width: 70%;
+  flex-wrap: wrap;
   gap: 0.6rem;
 
   @media (max-width: ${BREAKPOINT}px) {
-    display: flex;
-    gap: 0.5rem;
+    width: 100%;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0 0.5rem;
   }
 `;
 
-export const UserInfoItem = styled.li`
+export const UserInfoItem = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  width: calc((100% - 0.6rem * 2) / 3);
   gap: 0.7rem;
 
   @media (max-width: ${BREAKPOINT}px) {
+    width: calc((100% - 1rem * 2) / 3);
     gap: 0.5rem;
   }
 `;
@@ -64,7 +101,7 @@ export const UserInfoName = styled.h4`
 
 export const UserInfoItemTitle = styled.strong`
   font-size: 1.6rem;
-  font-weight: 500;
+  font-weight: 600;
 
   @media (max-width: ${BREAKPOINT}px) {
     font-size: 1.5rem;
@@ -78,6 +115,7 @@ export const UserInfoItemValue = styled.span`
 
   @media (max-width: ${BREAKPOINT}px) {
     font-size: 1.4rem;
+    word-break: break-all;
   }
 `;
 
@@ -257,5 +295,33 @@ export const EmptyPostsMessage = styled.div`
   @media (max-width: ${BREAKPOINT}px) {
     font-size: 1.4rem;
     padding: 3rem 1rem;
+  }
+`;
+
+export const MessageButton = styled(Link)`
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 2rem;
+
+  &:hover {
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: ${BREAKPOINT}px) {
+    display: inline-block;
+    font-size: 1.4rem;
+    padding: 0.8rem 1.6rem;
+    margin-top: 1.5rem;
   }
 `;
