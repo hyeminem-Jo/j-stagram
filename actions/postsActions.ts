@@ -139,3 +139,16 @@ export async function getPostsByUserId(userId: string): Promise<PostWithImages[]
 
   return await mapPostsWithUserInfo(posts);
 }
+
+// 게시글에 이미지 추가
+export async function createPostImages(postId: number, imageUrls: string[]) {
+  const supabase = await createServerSupabaseClient();
+  const imageInserts = imageUrls.map((url) => ({
+    post_id: postId,
+    url,
+  }));
+
+  const { data, error } = await supabase.from('images').insert(imageInserts).select();
+  if (error) handleError(error);
+  return data;
+}

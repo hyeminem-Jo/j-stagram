@@ -91,16 +91,21 @@ export const ImageSliderContainer = styled.div`
   }
 
   .slick-dots {
-    bottom: 15px;
+    bottom: -30px;
+
+    li {
+      margin: 0 1px;
+    }
 
     li button:before {
-      color: white;
+      color: gray;
       font-size: 8px;
-      opacity: 0.5;
+      opacity: 0.3;
     }
 
     li.slick-active button:before {
       opacity: 1;
+      color: orange;
     }
   }
 
@@ -113,6 +118,13 @@ export const ImageSliderContainer = styled.div`
     &:before {
       font-size: 30px;
       color: white;
+      opacity: 1;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.3);
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    &:hover:before {
+      opacity: 0.9;
     }
   }
 
@@ -143,10 +155,10 @@ export const SlideImage = styled.img`
 `;
 
 export const FeedContent = styled.div`
-  padding: 1.7rem;
+  padding: 2.5rem 1.7rem 1.7rem 1.7rem;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
-    padding: 1.5rem;
+    padding: 4rem 1.5rem 1.5rem 1.5rem;
   }
 `;
 

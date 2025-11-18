@@ -36,9 +36,10 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
                   user?.email?.split('@')[0]}
               </S.UserInfoName>
             )}
-            {myInfo?.id !== user?.id && (
+            {/* 내 프로필이 아닌 경우에만 메세지 보내기 버튼 표시 */}
+            {myInfo.id && user.id && myInfo.id !== user.id && (
               <S.MessageButton href={`/j-stagram/message?userId=${user.id}`}>
-                메시지 보내기
+                메세지 보내기
               </S.MessageButton>
             )}
           </S.UserNameAndMessageButton>

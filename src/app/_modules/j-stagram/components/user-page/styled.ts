@@ -6,7 +6,6 @@ export const UserPageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   flex-wrap: wrap;
   gap: 3rem;
   min-height: 100dvh;

@@ -15,7 +15,6 @@ export const StyledPostForm = styled.form`
   }
 
   @media (max-width: ${BREAKPOINT_SM}px) {
-    flex-direction: row;
     gap: 0.5rem;
     width: 100%;
     padding: 0 1.5rem;
@@ -24,4 +23,17 @@ export const StyledPostForm = styled.form`
       flex: 1;
     }
   }
+`;
+
+export const FileInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+`;
+
+export const SelectedFilesInfo = styled.span`
+  font-size: 0.875rem;
+  color: #666;
 `;

@@ -22,6 +22,7 @@ export const Textarea = styled.textarea<{
   outline: none;
   transition: border-color 0.1s ease;
   background-color: #fff;
+  font-size: 15px;
 
   &:focus {
     border-color: ${({ $hasError }) => ($hasError ? '#ff4757' : '#222')};

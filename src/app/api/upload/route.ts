@@ -15,9 +15,9 @@ export async function POST(req: NextRequest) {
           .from(process.env.NEXT_PUBLIC_STORAGE_BUCKET!)
           .upload(file.name, file, { upsert: true });
         if (error) {
-          return NextResponse.json({ error: error.message }, { status: 500 });
+          throw new Error(error.message);
         }
-        return NextResponse.json({ data });
+        return { data };
       }),
     );
     return NextResponse.json({ result });

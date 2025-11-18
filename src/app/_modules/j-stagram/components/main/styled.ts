@@ -5,7 +5,7 @@ export const JStagramMainContainer = styled.div`
   padding: 5rem 0 10rem;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
-    /* gap: 1.5rem; */
+    padding: 2rem 0 6rem;
   }
 `;
 

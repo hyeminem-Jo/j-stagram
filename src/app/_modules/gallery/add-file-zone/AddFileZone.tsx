@@ -5,22 +5,10 @@ import * as S from './styled';
 import Button from '@/app/_modules/common/components/button/button/Button';
 import { queryClient } from '@/app/config/ReactQueryProvider';
 import { useDropzone } from 'react-dropzone';
+import { toSafeFileName } from 'utils/fileUtil';
 
 const AddFileZone = () => {
   const [isUploading, setIsUploading] = useState(false);
-
-  // 파일명이 영문, 숫자, -, _ 로만 이루어져 있다면 원본 파일명 유지, 아닐 경우 변환 후 타임스탬프 추가
-  const toSafeFileName = (name: string) => {
-    const ext = name.includes('.') ? '.' + name.split('.').pop() : '';
-    const base = name.replace(/\.[^/.]+$/, '');
-    // 파일명이 이미 안전한 형식인지 체크
-    if (/^[a-zA-Z0-9-_]+$/.test(base)) {
-      return name;
-    }
-    const safeBase = base.replace(/[^a-zA-Z0-9-_]/g, '_');
-    const timestamp = Date.now();
-    return `${safeBase}_${timestamp}${ext}`;
-  };
 
   // API Route로 파일 업로드 (서버액션으로 파일 형식 데이터 업로드 실행이 안되는 상황)
   const handleUpload = async (formData: FormData) => {
