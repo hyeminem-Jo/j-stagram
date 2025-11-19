@@ -13,7 +13,7 @@ import { myInfoState } from '@/app/store';
 import { useMutation } from '@tanstack/react-query';
 import { queryClient } from '@/app/config/ReactQueryProvider';
 
-const JStagramFeed = ({ post }: { post: PostWithImages }) => {
+const JStagramFeed = ({ post, isModal }: { post: PostWithImages; isModal?: boolean }) => {
   const myInfo = useAtomValue(myInfoState);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -109,7 +109,7 @@ const JStagramFeed = ({ post }: { post: PostWithImages }) => {
           </S.UserInfo>
         </S.UserProfileSection>
         {isMyPost && (
-          <S.MoreButtonContainer ref={dropdownRef}>
+          <S.MoreButtonContainer ref={dropdownRef} $isModal={isModal}>
             <S.MoreButton
               type='button'
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -155,7 +155,9 @@ const JStagramFeed = ({ post }: { post: PostWithImages }) => {
         imageCount={post.images?.length}
       >
         <S.FeedTitle>{post.title}</S.FeedTitle>
-        <S.FeedDescription>{JSON.stringify(post)}</S.FeedDescription>
+        <S.FeedDescription $isModal={isModal} $hasImages={post.images && post.images.length > 0}>
+          {JSON.stringify(post)}
+        </S.FeedDescription>
         {/* <S.FeedDescription>{post.content}</S.FeedDescription> */}
       </S.FeedContent>
     </S.JStagramFeedContainer>

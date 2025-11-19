@@ -34,6 +34,8 @@ export const FileInputWrapper = styled.div`
 `;
 
 export const SelectedFilesInfo = styled.span`
-  font-size: 0.875rem;
-  color: #666;
+  flex: 1;
+  text-align: left;
+  font-size: 1.4rem;
+  color: #888;
 `;

@@ -161,14 +161,13 @@ const JStagramFeedList = () => {
         <Button
           type='button'
           text='이미지 선택'
+          bgColor='#ddd'
           iconName='plus'
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading || createPostMutation.isPending}
         />
         {selectedFiles.length > 0 && (
-          <S.SelectedFilesInfo>
-            {selectedFiles.length}개의 파일이 선택되었습니다.
-          </S.SelectedFilesInfo>
+          <S.SelectedFilesInfo>{selectedFiles.length}개의 파일 선택</S.SelectedFilesInfo>
         )}
         <Button
           type='submit'

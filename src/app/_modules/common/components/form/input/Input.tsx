@@ -58,6 +58,7 @@ function Input({
           $isFocus={isFocus}
           $isReadonly={isReadonly}
           $isUnderline={isUnderline}
+          $error={!!error}
           onChange={onChange}
           onBlur={(e) => {
             onBlur?.(e);

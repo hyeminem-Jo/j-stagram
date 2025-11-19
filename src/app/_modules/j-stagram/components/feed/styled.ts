@@ -106,8 +106,17 @@ export const DropdownMenuItem = styled.button`
   }
 `;
 
-export const MoreButtonContainer = styled.div`
+export const MoreButtonContainer = styled.div<{ $isModal?: boolean }>`
   position: relative;
+
+  @media (max-width: ${BREAKPOINT_SM}px) {
+    ${({ $isModal }) =>
+      $isModal &&
+      css`
+        position: absolute;
+        right: 5rem;
+      `}
+  }
 `;
 
 export const Username = styled.span`
@@ -246,14 +255,26 @@ export const FeedTitle = styled.h3`
   font-size: 1.7rem;
   font-weight: 600;
   color: #262626;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
   line-height: 1.4;
 `;
 
-export const FeedDescription = styled.p`
+export const FeedDescription = styled.p<{ $isModal?: boolean; $hasImages?: boolean }>`
   font-size: 1.5rem;
   color: #222;
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-all;
+
+  ${({ $isModal, $hasImages }) =>
+    $isModal &&
+    css`
+      max-height: ${$hasImages ? '150px' : 'auto'};
+      overflow: auto;
+      padding-bottom: 4rem;
+
+      @media (max-width: ${BREAKPOINT_SM}px) {
+        padding-bottom: 2rem;
+      }
+    `}
 `;

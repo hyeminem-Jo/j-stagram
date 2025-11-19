@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { BREAKPOINT } from '@/app/_modules/common/constant/breakpoint';
+import { BREAKPOINT, BREAKPOINT_SM } from '@/app/_modules/common/constant/breakpoint';
 import Link from 'next/link';
 
 export const UserPageContainer = styled.div`
@@ -16,6 +16,10 @@ export const UserPageContainer = styled.div`
     gap: 2rem;
     padding: 3rem 0;
     justify-content: flex-start;
+  }
+
+  @media (max-width: ${BREAKPOINT_SM}px) {
+    padding: 2.5rem 0 0;
   }
 `;
 
@@ -128,6 +132,11 @@ export const UserPostsSection = styled.div`
     margin: 3rem auto 0;
     padding: 0 1rem;
   }
+
+  @media (max-width: ${BREAKPOINT_SM}px) {
+    margin: 0 auto 0;
+    padding: 0;
+  }
 `;
 
 export const UserPostsTitle = styled.h3`
@@ -176,6 +185,11 @@ export const PostsGrid = styled.div`
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 0.8rem;
   }
+
+  @media (max-width: ${BREAKPOINT_SM}px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.1rem;
+  }
 `;
 
 export const PostThumbnailContainer = styled.div`
@@ -187,9 +201,9 @@ export const PostThumbnailContainer = styled.div`
   cursor: pointer;
   transition: transform 0.2s ease;
 
-  /* &:hover {
-    transform: scale(1.02);
-  } */
+  @media (max-width: ${BREAKPOINT_SM}px) {
+    border-radius: 0;
+  }
 
   &:hover .overlay {
     opacity: 1;
@@ -253,8 +267,12 @@ export const PostThumbnailTextContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 3rem;
   gap: 0.8rem;
+
+  @media (max-width: ${BREAKPOINT}px) {
+    padding: 1.5rem;
+  }
 `;
 
 export const PostThumbnailDate = styled.span`
@@ -283,6 +301,10 @@ export const PostThumbnailText = styled.p`
   @media (max-width: ${BREAKPOINT}px) {
     font-size: 1.4rem;
   }
+
+  @media (max-width: ${BREAKPOINT_SM}px) {
+    -webkit-line-clamp: 2;
+  }
 `;
 
 export const EmptyPostsMessage = styled.div`
@@ -294,6 +316,78 @@ export const EmptyPostsMessage = styled.div`
   @media (max-width: ${BREAKPOINT}px) {
     font-size: 1.4rem;
     padding: 3rem 1rem;
+  }
+`;
+
+export const ModalOverlay = styled.div<{ $isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: ${({ $isOpen }) => ($isOpen ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  overflow: hidden;
+
+  @media (max-width: ${BREAKPOINT}px) {
+    padding: 1rem;
+  }
+`;
+
+export const ModalContent = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  border-radius: 1.2rem;
+  max-width: 65rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  @media (max-width: ${BREAKPOINT}px) {
+    max-width: 100%;
+    max-height: 100vh;
+  }
+`;
+
+export const ModalCloseButton = styled.button`
+  position: absolute;
+  top: 0.2rem;
+  right: 2rem;
+  border: none;
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+  transition: all 0.2s ease;
+  font-size: 2.3rem;
+
+  i:before {
+    color: #fff;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+  }
+
+  @media (max-width: ${BREAKPOINT}px) {
+    width: 3.5rem;
+    height: 3.5rem;
+    top: 1rem;
+    right: 1rem;
+
+    i:before {
+      color: #222;
+    }
   }
 `;
 

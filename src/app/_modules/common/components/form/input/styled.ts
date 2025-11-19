@@ -38,6 +38,7 @@ export const Input = styled.input<StyleProps>`
 
   &:focus {
     border-color: ${({ $color }) => ($color === 'white' ? '#222' : '#fff')};
+    border-color: ${({ $error }) => ($error ? '#ff4757' : '#222')};
   }
   ${({ $isReadonly }) =>
     $isReadonly &&
@@ -59,6 +60,10 @@ export const Input = styled.input<StyleProps>`
     css`
       text-decoration: line-through;
     `}
+
+  &::placeholder {
+    color: #adb5bd;
+  }
 `;
 
 export const InputWrap = styled.div<StyleProps>`
@@ -107,7 +112,8 @@ export const DeleteInputBtn = styled.button``;
 
 export const InputError = styled.p`
   display: block;
-  margin-top: 0.6rem;
   text-align: left;
-  color: #ff0000;
+  font-size: 1.3rem;
+  color: #ff4757;
+  margin-top: 0.2rem;
 `;

@@ -25,7 +25,7 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
       <S.UserPageHeader>
         {!isMobile && <UserProfileImage user={user} size={160} />}
         <S.UserPageHeaderInner>
-          {isMobile && <UserProfileImage user={user} size={80} />}
+          {isMobile && <UserProfileImage user={user} size={90} />}
           <S.UserNameAndMessageButton>
             {(user?.user_metadata?.preferred_username ||
               user?.user_metadata?.name ||

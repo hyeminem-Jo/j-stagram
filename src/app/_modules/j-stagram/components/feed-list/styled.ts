@@ -13,5 +13,6 @@ export const JStagramFeedListContainer = styled.div`
   @media (max-width: ${BREAKPOINT_SM}px) {
     gap: 2.5rem;
     padding: 0;
+    background-color: #fff;
   }
 `;

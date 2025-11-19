@@ -40,7 +40,7 @@ export const Textarea = styled.textarea<{
 `;
 
 export const TextareaError = styled.span`
-  font-size: 12px;
+  font-size: 1.3rem;
   color: #ff4757;
-  margin-top: 2px;
+  margin-top: 0.2rem;
 `;
