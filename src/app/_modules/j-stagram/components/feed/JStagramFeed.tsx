@@ -75,7 +75,10 @@ const JStagramFeed = ({ post }: { post: PostWithImages }) => {
       )}
 
       {/* 게시글 내용 */}
-      <S.FeedContent>
+      <S.FeedContent
+        hasImages={post.images && post.images.length > 0}
+        imageCount={post.images?.length}
+      >
         <S.FeedTitle>{post.title}</S.FeedTitle>
         <S.FeedDescription>{JSON.stringify(post)}</S.FeedDescription>
         {/* <S.FeedDescription>{post.content}</S.FeedDescription> */}

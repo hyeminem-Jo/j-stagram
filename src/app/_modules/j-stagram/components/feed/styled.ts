@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 import { BREAKPOINT_SM } from '@/app/_modules/common/constant/breakpoint';
 
 export const JStagramFeedContainer = styled.div`
@@ -154,12 +155,29 @@ export const SlideImage = styled.img`
   object-fit: cover;
 `;
 
-export const FeedContent = styled.div`
-  padding: 2.5rem 1.7rem 1.7rem 1.7rem;
+export const FeedContent = styled.div<{ hasImages?: boolean; imageCount?: number }>`
+  padding: 1.7rem;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
-    padding: 4rem 1.5rem 1.5rem 1.5rem;
+    padding: 1.5rem;
   }
+
+  ${({ hasImages, imageCount }) =>
+    hasImages
+      ? css`
+          padding-top: 2.5rem;
+
+          @media (max-width: ${BREAKPOINT_SM}px) {
+            ${imageCount && imageCount >= 2 && 'padding-top: 4rem;'};
+          }
+        `
+      : css`
+          padding-top: 4rem;
+
+          @media (max-width: ${BREAKPOINT_SM}px) {
+            padding-top: 0;
+          }
+        `}
 `;
 
 export const FeedTitle = styled.h3`
