@@ -27,6 +27,9 @@ export const JStagramFeedContainer = styled.div`
 export const FeedHeader = styled.div`
   padding: 1.5rem;
   padding-bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
     padding: 1.2rem;
@@ -37,6 +40,7 @@ export const UserProfileSection = styled.div`
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  flex: 1;
 `;
 
 export const UserInfo = styled.div`
@@ -44,6 +48,66 @@ export const UserInfo = styled.div`
   width: 100%;
   gap: 1.4rem;
   align-items: center;
+`;
+
+export const MoreButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #262626;
+  font-size: 1.6rem;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
+export const DropdownMenu = styled.div<{ $isOpen: boolean }>`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 12rem;
+  z-index: 10;
+  display: ${({ $isOpen }) => ($isOpen ? 'block' : 'none')};
+  overflow: hidden;
+`;
+
+export const DropdownMenuItem = styled.button`
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1.4rem;
+  color: #262626;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  &:first-of-type {
+    border-bottom: 1px solid #dbdbdb;
+  }
+
+  &.delete {
+    color: #ed4956;
+  }
+`;
+
+export const MoreButtonContainer = styled.div`
+  position: relative;
 `;
 
 export const Username = styled.span`

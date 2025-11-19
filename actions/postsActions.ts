@@ -108,10 +108,90 @@ export async function updatePost(post: PostRowUpdate) {
   return data;
 }
 
+// URL에서 파일 경로 추출
+function extractFilePathFromUrl(url: string): string | null {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const bucket = process.env.NEXT_PUBLIC_STORAGE_BUCKET;
+    const prefix = `${supabaseUrl}/storage/v1/object/public/${bucket}/`;
+
+    if (url.startsWith(prefix)) {
+      return url.replace(prefix, '');
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export async function deletePost(postId: number) {
   const supabase = await createServerSupabaseClient();
+
+  // 1. 해당 post_id의 이미지들 가져오기
+  const { data: images, error: imagesError } = await supabase
+    .from('images')
+    .select('url')
+    .eq('post_id', postId);
+
+  if (imagesError) handleError(imagesError);
+
+  // 2. images 테이블에서 삭제
+  if (images && images.length > 0) {
+    // 사용자가 중복된 사진을 다른 게시글에 각각 올렸을 때 예외처리
+    // 2-1. 각 이미지 URL이 다른 post_id에서도 사용되는지 확인
+    const imagesToDeleteFromStorage: string[] = [];
+
+    for (const image of images) {
+      // 해당 URL이 다른 post_id에서도 사용되는지 확인
+      const { data: otherPosts, error: checkError } = await supabase
+        .from('images')
+        .select('post_id')
+        .eq('url', image.url)
+        .neq('post_id', postId);
+
+      if (checkError) {
+        console.error('이미지 중복 확인 실패:', checkError);
+        continue;
+      }
+
+      // 다른 게시글에서 사용되지 않는 경우에만 Storage 삭제 대상에 추가
+      if (!otherPosts || otherPosts.length === 0) {
+        const filePath = extractFilePathFromUrl(image.url);
+        if (filePath) {
+          imagesToDeleteFromStorage.push(filePath);
+        }
+      }
+    }
+
+    // 2-2. images 테이블에서 해당 post_id 의 레코드 삭제
+    const { error: deleteImagesError } = await supabase
+      .from('images')
+      .delete()
+      .eq('post_id', postId);
+
+    if (deleteImagesError) handleError(deleteImagesError);
+
+    // 2-3. 아예 다른 게시글에서도 사용되지 않는 이미지만 Storage에서 삭제
+    if (imagesToDeleteFromStorage.length > 0) {
+      const { error: storageError } = await supabase.storage
+        .from(process.env.NEXT_PUBLIC_STORAGE_BUCKET!)
+        .remove(imagesToDeleteFromStorage);
+
+      if (storageError) {
+        console.error('Storage 파일 삭제 실패:', storageError);
+        // Storage 삭제 실패해도 게시글은 삭제 진행
+      }
+    }
+  }
+
+  console.log('postId', postId);
+
+  // 3. posts 테이블에서 게시글 삭제
   const { data, error } = await supabase.from('posts').delete().eq('id', postId);
-  if (error) handleError(error);
+  if (error) {
+    console.error('게시글 삭제 실패:', error);
+    handleError(error);
+  }
   return data;
 }
 
