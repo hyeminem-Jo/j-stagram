@@ -165,15 +165,13 @@ export const FeedContent = styled.div<{ hasImages?: boolean; imageCount?: number
   ${({ hasImages, imageCount }) =>
     hasImages
       ? css`
-          padding-top: 2.5rem;
+          padding-top: ${imageCount && imageCount >= 2 ? '2.5rem' : '0'};
 
           @media (max-width: ${BREAKPOINT_SM}px) {
-            ${imageCount && imageCount >= 2 && 'padding-top: 4rem;'};
+            padding-top: ${imageCount && imageCount >= 2 ? '4rem' : '1.5rem'};
           }
         `
       : css`
-          padding-top: 4rem;
-
           @media (max-width: ${BREAKPOINT_SM}px) {
             padding-top: 0;
           }
