@@ -1,16 +1,23 @@
 'use client';
 
 import * as S from './styled';
-import { myInfoState } from '@/app/store';
+import { myInfoState, postSearchState } from '@/app/store';
 import { useAtom } from 'jotai';
 import Loading from '@/app/_modules/common/components/loading/Loading';
 import { createBrowserSupabaseClient } from 'utils/supabase/client';
 import JStagramFeedList from '../feed-list/JStagramFeedList';
 import PostForm from '../post-form/PostForm';
+import { useEffect } from 'react';
 
 const JStagramMain = () => {
   const [myInfo] = useAtom(myInfoState);
+  const [, setPostSearch] = useAtom(postSearchState);
   const supabase = createBrowserSupabaseClient();
+
+  // 홈 페이지에서는 검색어를 초기화하여 전체 게시글을 보여줌
+  useEffect(() => {
+    setPostSearch('');
+  }, [setPostSearch]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

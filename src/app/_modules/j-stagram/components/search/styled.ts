@@ -52,6 +52,7 @@ export const JStagramSearchContent = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 3rem 2rem 2rem;
+  background-color: #f5f5f5;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
     padding: 1.5rem 1.5rem;

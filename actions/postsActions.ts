@@ -70,11 +70,7 @@ export async function getPosts(
 ): Promise<PostsWithPagination> {
   const supabase = await createServerSupabaseClient();
 
-  const {
-    data: posts,
-    count,
-    error,
-  } = await supabase
+  let query = supabase
     .from('posts')
     .select(
       `
@@ -88,8 +84,18 @@ export async function getPosts(
     `,
       { count: 'exact' },
     ) // posts + 연결된 images 배열 가져오기
-    .eq('is_public', true)
-    .or(`title.like.%${search}%,content.like.%${search}%`)
+    .eq('is_public', true);
+
+  // 검색어가 있을 때만 검색 조건 추가
+  if (search && search.trim()) {
+    query = query.or(`title.like.%${search}%,content.like.%${search}%`);
+  }
+
+  const {
+    data: posts,
+    count,
+    error,
+  } = await query
     .order('created_at', { ascending: false }) // 최신순으로 불러오기
     .range((page - 1) * pageSize, page * pageSize - 1);
 

@@ -204,9 +204,9 @@ const JStagramFeed = ({
               $isModal={isModal}
               $hasImages={post.images && post.images.length > 0}
             >
-              {JSON.stringify(post)}
+              {post.content}
+              {/* {JSON.stringify(post)} */}
             </S.FeedDescription>
-            {/* <S.FeedDescription>{post.content}</S.FeedDescription> */}
           </>
         )}
       </S.FeedContent>

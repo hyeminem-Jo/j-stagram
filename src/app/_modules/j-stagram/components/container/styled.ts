@@ -15,4 +15,5 @@ export const JStagramContainer = styled.div`
 
 export const JStagramContent = styled.div`
   line-height: 1.6;
+  background-color: #fff;
 `;
