@@ -285,12 +285,6 @@ const PostForm = ({
     ? updatePostMutation.isPending || isUploading
     : createPostMutation.isPending || isUploading;
 
-  console.log(
-    'updatePostMutation.isPending || isUploading',
-    updatePostMutation.isPending || isUploading,
-  );
-  // console.log('createPostMutation.isPending', createPostMutation.isPending);
-
   // isPending 상태 변경 시 부모 컴포넌트에 알림
   useEffect(() => {
     onPendingChange?.(isLoading);
@@ -307,6 +301,7 @@ const PostForm = ({
         control={control}
         placeholder='제목을 입력해주세요'
         error={errors.title}
+        maxLength={50}
       />
       <ControlledTextarea
         name='postInput'
@@ -314,6 +309,7 @@ const PostForm = ({
         control={control}
         placeholder='오늘은 어떤 일이 있었나요? :)'
         error={errors.postInput}
+        maxLength={500}
       />
 
       {/* 이미지 썸네일 */}
