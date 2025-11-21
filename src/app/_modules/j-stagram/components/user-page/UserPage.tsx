@@ -16,6 +16,7 @@ import PostForm from '@/app/_modules/j-stagram/components/post-form/PostForm';
 import JStagramFeed from '@/app/_modules/j-stagram/components/feed/JStagramFeed';
 import { queryClient } from '@/app/config/ReactQueryProvider';
 import PostModal from './PostModal';
+import { createBrowserSupabaseClient } from 'utils/supabase/client';
 
 const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
   const myInfo = useAtomValue(myInfoState);
@@ -23,6 +24,7 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [isModalPending, setIsModalPending] = useState(false);
+  const supabase = createBrowserSupabaseClient();
 
   // 사용자 표시 이름 가져오기
   const getUserDisplayName = useMemo(() => {
@@ -55,6 +57,12 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
     e.preventDefault();
     setIsModalOpen(true);
     setSelectedPostId(null); // 글쓰기 모드로 시작
+  };
+
+  const handleLogout = async () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      await supabase.auth.signOut();
+    }
   };
 
   const handleCloseModal = () => {
@@ -99,10 +107,16 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
                 메세지 보내기
               </S.MessageButton>
             ) : myInfo.id && user.id && myInfo.id === user.id ? (
-              <S.WriteButton type='button' onClick={handleWriteButtonClick}>
-                글쓰기
-                <i className='fa-solid fa-pen'></i>
-              </S.WriteButton>
+              <S.UserActionButtons>
+                <S.WriteButton type='button' onClick={handleWriteButtonClick}>
+                  글쓰기
+                  <i className='fa-solid fa-pen'></i>
+                </S.WriteButton>
+                <S.LogoutButton type='button' onClick={handleLogout} aria-label='로그아웃'>
+                  로그아웃
+                  <i className='fa-solid fa-right-from-bracket'></i>
+                </S.LogoutButton>
+              </S.UserActionButtons>
             ) : null}
           </S.UserNameAndMessageButton>
           <S.UserInfo>

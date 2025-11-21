@@ -9,7 +9,7 @@ export const JStagramContainer = styled.div`
 
   @media (max-width: ${BREAKPOINT_SM}px) {
     padding-left: 0;
-    padding-bottom: 6rem;
+    padding-bottom: 8rem;
   }
 `;
 

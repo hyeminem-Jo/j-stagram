@@ -32,8 +32,8 @@ export const SideBarContainer = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
-    height: 6rem;
+    padding: 1.5rem 1.5rem 2.5rem;
+    height: 8rem;
     border-right: none;
     border-top: 1px solid #ccc;
   }
@@ -48,7 +48,8 @@ export const SideBarContent = styled.nav`
   @media (max-width: ${BREAKPOINT_SM}px) {
     order: 1;
     flex-direction: row;
-    gap: 2rem;
+    align-items: center;
+    gap: 1.2rem;
     margin-top: 0;
   }
 `;
@@ -65,8 +66,8 @@ export const SideBarHomeLink = styled(Link)`
 
   @media (max-width: ${BREAKPOINT_SM}px) {
     order: 2;
-    width: 3rem;
-    height: 3rem;
+    width: 3.5rem;
+    height: 3.5rem;
     margin: 0;
   }
 `;
@@ -96,12 +97,12 @@ export const SideBarLink = styled(Link, {
     `}
 
   @media (max-width: ${BREAKPOINT_SM}px) {
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 4.5rem;
+    height: 4.5rem;
     margin: 0;
 
     i {
-      font-size: 2rem;
+      font-size: 2.5rem;
     }
   }
 `;
@@ -134,23 +135,28 @@ export const SideBarProfileLink = styled(Link, {
       }
     `}
 
-  ${({ $isActive }) =>
-    $isActive &&
-    css`
-      outline: 2px solid orange;
-      outline-offset: 2px;
-    `}
-
   @media (max-width: ${BREAKPOINT_SM}px) {
-    width: 3.3rem;
-    height: 3.3rem;
+    width: 3.6rem;
+    height: 3.6rem;
     margin: 0;
     margin-left: 0.5rem;
+    border: 1px solid #222;
 
     i {
       font-size: 1.5rem;
     }
   }
+
+  ${({ $isActive }) =>
+    $isActive &&
+    css`
+      outline: 2px solid orange;
+      outline-offset: 2px;
+
+      @media (max-width: ${BREAKPOINT_SM}px) {
+        border: none;
+      }
+    `}
 `;
 
 export const SideBarLogoutButton = styled.button`

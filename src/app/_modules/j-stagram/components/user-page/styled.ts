@@ -61,7 +61,7 @@ export const UserNameAndMessageButton = styled.div`
   }
 
   @media (max-width: ${BREAKPOINT}px) {
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
   }
@@ -429,13 +429,20 @@ export const MessageButton = styled(Link)`
   }
 `;
 
-export const WriteButton = styled.button`
+export const UserActionButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  @media (max-width: ${BREAKPOINT}px) {
+    gap: 0.8rem;
+  }
+`;
+
+const BaseButton = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #222;
-  color: white;
-  border: none;
   border-radius: 8px;
   padding: 0.8rem 1.6rem;
   font-size: 1.4rem;
@@ -444,21 +451,41 @@ export const WriteButton = styled.button`
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   text-decoration: none;
 
-  &:hover {
-    box-shadow: 0 3px 10px rgba(34, 34, 34, 0.4);
-  }
-
   &:active {
     transform: translateY(0);
-  }
-
-  i:before {
-    color: #fff;
   }
 
   @media (max-width: ${BREAKPOINT}px) {
     display: inline-flex;
     font-size: 1.4rem;
     padding: 0.8rem 1.6rem;
+  }
+`;
+
+export const WriteButton = styled(BaseButton)`
+  background-color: #222;
+  color: white;
+  border: none;
+
+  &:hover {
+    box-shadow: 0 3px 10px rgba(34, 34, 34, 0.4);
+  }
+
+  i:before {
+    color: #fff;
+  }
+`;
+
+export const LogoutButton = styled(BaseButton)`
+  background-color: #fff;
+  border: 1px solid #222;
+  color: #222;
+
+  &:hover {
+    box-shadow: 0 3px 10px rgba(34, 34, 34, 0.4);
+  }
+
+  i:before {
+    color: #222;
   }
 `;
