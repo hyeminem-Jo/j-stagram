@@ -12,10 +12,24 @@ import { useAtomValue } from 'jotai';
 import { myInfoState } from '@/app/store';
 import { useMutation } from '@tanstack/react-query';
 import { queryClient } from '@/app/config/ReactQueryProvider';
+import PostForm from '@/app/_modules/j-stagram/components/post-form/PostForm';
 
-const JStagramFeed = ({ post, isModal }: { post: PostWithImages; isModal?: boolean }) => {
+const JStagramFeed = ({
+  post,
+  isModal,
+  onPostDeleted,
+  onPostUpdated,
+  onPendingChange,
+}: {
+  post: PostWithImages;
+  isModal?: boolean;
+  onPostDeleted?: () => void;
+  onPostUpdated?: () => void;
+  onPendingChange?: (isPending: boolean) => void;
+}) => {
   const myInfo = useAtomValue(myInfoState);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const isMyPost = myInfo?.id === post.user_id;
   const sliderSettings = {
@@ -77,13 +91,24 @@ const JStagramFeed = ({ post, isModal }: { post: PostWithImages; isModal?: boole
     mutationFn: deletePost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['userPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['post', post.id] });
       setIsDropdownOpen(false);
+      onPostDeleted?.(); // 게시글이 삭제될 시 모달 닫힘
     },
     onError: (error) => {
       console.error('게시글 삭제 실패:', error);
       alert('게시글 삭제에 실패했습니다.');
     },
+    onSettled: () => {
+      onPendingChange?.(false);
+    },
   });
+
+  // isPending 상태 변경 시 부모 컴포넌트에 알림
+  useEffect(() => {
+    onPendingChange?.(deletePostMutation.isPending);
+  }, [deletePostMutation.isPending, onPendingChange]);
 
   const handleDelete = () => {
     if (confirm('정말 이 게시글을 삭제하시겠습니까?')) {
@@ -92,9 +117,16 @@ const JStagramFeed = ({ post, isModal }: { post: PostWithImages; isModal?: boole
   };
 
   const handleEdit = () => {
-    // TODO: 수정 기능 구현
-    alert('수정 기능은 준비 중');
+    setIsEditMode(true);
     setIsDropdownOpen(false);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
+  };
+
+  const handleEditSuccess = () => {
+    setIsEditMode(false);
   };
 
   return (
@@ -134,8 +166,8 @@ const JStagramFeed = ({ post, isModal }: { post: PostWithImages; isModal?: boole
         )}
       </S.FeedHeader>
 
-      {/* 이미지 슬라이더 */}
-      {post.images && post.images.length > 0 && (
+      {/* 이미지 슬라이더 (편집 모드가 아닐 때) */}
+      {!isEditMode && post.images && post.images.length > 0 && (
         <S.FeedImageWrap>
           <S.ImageSliderContainer>
             <Slider {...sliderSettings}>
@@ -154,11 +186,29 @@ const JStagramFeed = ({ post, isModal }: { post: PostWithImages; isModal?: boole
         hasImages={post.images && post.images.length > 0}
         imageCount={post.images?.length}
       >
-        <S.FeedTitle>{post.title}</S.FeedTitle>
-        <S.FeedDescription $isModal={isModal} $hasImages={post.images && post.images.length > 0}>
-          {JSON.stringify(post)}
-        </S.FeedDescription>
-        {/* <S.FeedDescription>{post.content}</S.FeedDescription> */}
+        {isEditMode ? (
+          <PostForm
+            editMode={true}
+            post={post}
+            onCancel={handleCancelEdit}
+            onSuccess={() => {
+              handleEditSuccess();
+              onPostUpdated?.(); // 모달 데이터 갱신 콜백
+            }}
+            onPendingChange={onPendingChange}
+          />
+        ) : (
+          <>
+            <S.FeedTitle>{post.title}</S.FeedTitle>
+            <S.FeedDescription
+              $isModal={isModal}
+              $hasImages={post.images && post.images.length > 0}
+            >
+              {JSON.stringify(post)}
+            </S.FeedDescription>
+            {/* <S.FeedDescription>{post.content}</S.FeedDescription> */}
+          </>
+        )}
       </S.FeedContent>
     </S.JStagramFeedContainer>
   );

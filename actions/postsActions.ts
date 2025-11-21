@@ -13,7 +13,7 @@ export type PostWithImages = {
   id: number;
   title: string;
   content: string;
-  images: { url: string }[];
+  images: { id?: number; url: string }[];
   user_id: string;
   created_at: string;
   like_count: number;
@@ -69,7 +69,7 @@ export async function getPosts({ searchInput = '' }): Promise<PostWithImages[]> 
       user_id,
       created_at,
       like_count,
-      images (url)
+      images (id, url)
     `,
     ) // posts + 연결된 images 배열 가져오기
     .eq('is_public', true)
@@ -97,13 +97,15 @@ export async function createPost(post: PostRowInsert) {
 
 export async function updatePost(post: PostRowUpdate) {
   const supabase = await createServerSupabaseClient();
+  const { id, ...updateData } = post;
   const { data, error } = await supabase
     .from('posts')
     .update({
-      ...post,
+      ...updateData,
       updated_at: new Date().toISOString(),
     })
-    .eq('id', post.id); // 게시글 아이디와 일치하는 게시글 업데이트
+    .eq('id', id)
+    .select(); // 게시글 아이디와 일치하는 게시글 업데이트
   if (error) handleError(error);
   return data;
 }
@@ -124,6 +126,53 @@ function extractFilePathFromUrl(url: string): string | null {
   }
 }
 
+// 이미지 URL이 다른 post_id에서도 사용되는지 확인
+async function checkImageUsedInOtherPosts(
+  supabase: any,
+  imageUrl: string,
+  excludePostId: number,
+): Promise<boolean> {
+  const { data: otherPosts, error: checkError } = await supabase
+    .from('images')
+    .select('post_id')
+    .eq('url', imageUrl)
+    .neq('post_id', excludePostId);
+
+  if (checkError) {
+    console.error('이미지 중복 확인 실패:', checkError);
+    return false;
+  }
+
+  return (otherPosts?.length ?? 0) > 0;
+}
+
+// 다른 게시글에서 사용되지 않는 경우 Storage에서 이미지 삭제
+async function deleteImageFromStorageIfNotUsed(
+  supabase: any,
+  imageUrl: string,
+  excludePostId: number,
+): Promise<void> {
+  const isUsedInOtherPosts = await checkImageUsedInOtherPosts(supabase, imageUrl, excludePostId);
+
+  // 다른 게시글에서 사용되지 않는 경우에만 Storage에서 삭제
+  if (!isUsedInOtherPosts) {
+    const filePath = extractFilePathFromUrl(imageUrl);
+    if (filePath) {
+      const bucket = process.env.NEXT_PUBLIC_STORAGE_BUCKET;
+      if (!bucket) {
+        console.error('[deleteImageFromStorageIfNotUsed] STORAGE_BUCKET 환경 변수가 없습니다.');
+        return;
+      }
+
+      const { error: storageError } = await supabase.storage.from(bucket).remove([filePath]);
+      if (storageError) {
+        console.error('Storage 파일 삭제 실패:', storageError);
+        // Storage 삭제 실패해도 계속 진행
+      }
+    }
+  }
+}
+
 export async function deletePost(postId: number) {
   const supabase = await createServerSupabaseClient();
 
@@ -138,24 +187,14 @@ export async function deletePost(postId: number) {
   // 2. images 테이블에서 삭제
   if (images && images.length > 0) {
     // 사용자가 중복된 사진을 다른 게시글에 각각 올렸을 때 예외처리
-    // 2-1. 각 이미지 URL이 다른 post_id에서도 사용되는지 확인
+    // 2-1. 각 이미지 URL이 다른 post_id에서도 사용되는지 확인하고 Storage 삭제 대상 수집
     const imagesToDeleteFromStorage: string[] = [];
 
     for (const image of images) {
-      // 해당 URL이 다른 post_id에서도 사용되는지 확인
-      const { data: otherPosts, error: checkError } = await supabase
-        .from('images')
-        .select('post_id')
-        .eq('url', image.url)
-        .neq('post_id', postId);
-
-      if (checkError) {
-        console.error('이미지 중복 확인 실패:', checkError);
-        continue;
-      }
+      const isUsedInOtherPosts = await checkImageUsedInOtherPosts(supabase, image.url, postId);
 
       // 다른 게시글에서 사용되지 않는 경우에만 Storage 삭제 대상에 추가
-      if (!otherPosts || otherPosts.length === 0) {
+      if (!isUsedInOtherPosts) {
         const filePath = extractFilePathFromUrl(image.url);
         if (filePath) {
           imagesToDeleteFromStorage.push(filePath);
@@ -173,18 +212,21 @@ export async function deletePost(postId: number) {
 
     // 2-3. 아예 다른 게시글에서도 사용되지 않는 이미지만 Storage에서 삭제
     if (imagesToDeleteFromStorage.length > 0) {
-      const { error: storageError } = await supabase.storage
-        .from(process.env.NEXT_PUBLIC_STORAGE_BUCKET!)
-        .remove(imagesToDeleteFromStorage);
+      const bucket = process.env.NEXT_PUBLIC_STORAGE_BUCKET;
+      if (!bucket) {
+        console.error('[deletePost] STORAGE_BUCKET 환경 변수가 없습니다.');
+      } else {
+        const { error: storageError } = await supabase.storage
+          .from(bucket)
+          .remove(imagesToDeleteFromStorage);
 
-      if (storageError) {
-        console.error('Storage 파일 삭제 실패:', storageError);
-        // Storage 삭제 실패해도 게시글은 삭제 진행
+        if (storageError) {
+          console.error('Storage 파일 삭제 실패:', storageError);
+          // Storage 삭제 실패해도 게시글은 삭제 진행
+        }
       }
     }
   }
-
-  console.log('postId', postId);
 
   // 3. posts 테이블에서 게시글 삭제
   const { data, error } = await supabase.from('posts').delete().eq('id', postId);
@@ -208,7 +250,7 @@ export async function getPostsByUserId(userId: string): Promise<PostWithImages[]
       user_id,
       created_at,
       like_count,
-      images (url)
+      images (id, url)
     `,
     )
     .eq('user_id', userId)
@@ -218,6 +260,34 @@ export async function getPostsByUserId(userId: string): Promise<PostWithImages[]
   if (error) handleError(error);
 
   return await mapPostsWithUserInfo(posts);
+}
+
+// 개별 게시글 가져오기
+export async function getPostById(postId: number): Promise<PostWithImages | null> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data: post, error } = await supabase
+    .from('posts')
+    .select(
+      `
+      id,
+      title,
+      content,
+      user_id,
+      created_at,
+      like_count,
+      images (id, url)
+    `,
+    )
+    .eq('id', postId)
+    .eq('is_public', true)
+    .maybeSingle();
+
+  if (error) handleError(error);
+  if (!post) return null;
+
+  const posts = await mapPostsWithUserInfo([post]);
+  return posts[0] || null;
 }
 
 // 게시글에 이미지 추가
@@ -230,5 +300,29 @@ export async function createPostImages(postId: number, imageUrls: string[]) {
 
   const { data, error } = await supabase.from('images').insert(imageInserts).select();
   if (error) handleError(error);
+  return data;
+}
+
+// 이미지 삭제 (images 테이블에서 삭제, 다른 게시글에서 사용되지 않는 경우 Storage에서도 삭제)
+export async function deleteImage(imageId: number) {
+  const supabase = await createServerSupabaseClient();
+
+  // 1. 삭제할 이미지 정보 가져오기
+  const { data: imageData, error: fetchError } = await supabase
+    .from('images')
+    .select('id, url, post_id')
+    .eq('id', imageId)
+    .single();
+
+  if (fetchError) handleError(fetchError);
+  if (!imageData) return null;
+
+  // 2. images 테이블에서 삭제
+  const { data, error } = await supabase.from('images').delete().eq('id', imageId).select();
+  if (error) handleError(error);
+
+  // 3. 다른 게시글에서 사용되지 않는 경우에만 Storage에서 삭제
+  await deleteImageFromStorageIfNotUsed(supabase, imageData.url, imageData.post_id);
+
   return data;
 }

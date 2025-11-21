@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import * as S from './styled';
-import { PostWithImages } from 'actions/postsActions';
+import { PostWithImages, getPostById } from 'actions/postsActions';
 import DateUtil from '@/app/_modules/common/utils/dateUtil';
 import JStagramFeed from '@/app/_modules/j-stagram/components/feed/JStagramFeed';
+import { useQuery } from '@tanstack/react-query';
+import PostModal from './PostModal';
 
 interface PostThumbnailProps {
   post: PostWithImages;
@@ -12,58 +14,22 @@ interface PostThumbnailProps {
 
 const PostThumbnail = ({ post }: PostThumbnailProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalPending, setIsModalPending] = useState(false);
   const hasImage = post.images && post.images.length > 0;
 
-  // 모달이 열렸을 때 body 스크롤 방지
+  // 모달이 열렸을 때 최신 게시글 데이터 가져오기
+  const { data: latestPost, refetch } = useQuery({
+    queryKey: ['post', post.id],
+    queryFn: () => getPostById(post.id),
+    enabled: isModalOpen,
+    refetchOnWindowFocus: false,
+  });
+
   useEffect(() => {
     if (isModalOpen) {
-      // 현재 스크롤 위치 저장
-      const scrollY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
-    } else {
-      // 스크롤 위치 복원
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
+      refetch();
     }
-
-    return () => {
-      // cleanup 시에도 복원
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
-    };
-  }, [isModalOpen]);
-
-  // ESC 키로 모달 닫기
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isModalOpen) {
-        setIsModalOpen(false);
-      }
-    };
-
-    if (isModalOpen) {
-      document.addEventListener('keydown', handleEscape);
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [isModalOpen]);
+  }, [isModalOpen, refetch]);
 
   const handleThumbnailClick = () => {
     setIsModalOpen(true);
@@ -71,12 +37,6 @@ const PostThumbnail = ({ post }: PostThumbnailProps) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-  };
-
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      handleCloseModal();
-    }
   };
 
   return (
@@ -98,14 +58,15 @@ const PostThumbnail = ({ post }: PostThumbnailProps) => {
         </S.PostThumbnailOverlay>
       </S.PostThumbnailContainer>
 
-      <S.ModalOverlay $isOpen={isModalOpen} onClick={handleOverlayClick}>
-        <S.ModalContent onClick={(e) => e.stopPropagation()}>
-          <S.ModalCloseButton type='button' onClick={handleCloseModal} aria-label='닫기'>
-            <i className='fa-solid fa-xmark'></i>
-          </S.ModalCloseButton>
-          <JStagramFeed post={post} isModal={true} />
-        </S.ModalContent>
-      </S.ModalOverlay>
+      <PostModal isOpen={isModalOpen} onClose={handleCloseModal} isPending={isModalPending}>
+        <JStagramFeed
+          post={latestPost || post}
+          isModal={true}
+          onPostDeleted={() => setIsModalOpen(false)}
+          onPostUpdated={() => refetch()}
+          onPendingChange={setIsModalPending}
+        />
+      </PostModal>
     </>
   );
 };

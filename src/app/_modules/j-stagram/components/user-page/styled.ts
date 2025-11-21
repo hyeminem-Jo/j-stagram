@@ -349,9 +349,16 @@ export const ModalContent = styled.div`
   overflow-y: auto;
 
   @media (max-width: ${BREAKPOINT}px) {
-    max-width: 100%;
     max-height: 100vh;
   }
+`;
+
+export const ModalLoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20rem;
+  width: 100%;
 `;
 
 export const ModalCloseButton = styled.button`
@@ -379,7 +386,7 @@ export const ModalCloseButton = styled.button`
     transform: scale(1.05);
   }
 
-  @media (max-width: ${BREAKPOINT}px) {
+  @media (max-width: ${BREAKPOINT_SM}px) {
     width: 3.5rem;
     height: 3.5rem;
     top: 1rem;
@@ -402,6 +409,9 @@ export const MessageButton = styled(Link)`
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   margin-top: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 
   &:hover {
     box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
@@ -412,9 +422,43 @@ export const MessageButton = styled(Link)`
   }
 
   @media (max-width: ${BREAKPOINT}px) {
-    display: inline-block;
+    display: inline-flex;
     font-size: 1.4rem;
     padding: 0.8rem 1.6rem;
     margin-top: 1.5rem;
+  }
+`;
+
+export const WriteButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #222;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+
+  &:hover {
+    box-shadow: 0 3px 10px rgba(34, 34, 34, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  i:before {
+    color: #fff;
+  }
+
+  @media (max-width: ${BREAKPOINT}px) {
+    display: inline-flex;
+    font-size: 1.4rem;
+    padding: 0.8rem 1.6rem;
   }
 `;
