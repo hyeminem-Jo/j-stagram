@@ -89,7 +89,7 @@ export async function getPosts(
       { count: 'exact' },
     ) // posts + 연결된 images 배열 가져오기
     .eq('is_public', true)
-    .like('title', `%${search}%`)
+    .or(`title.like.%${search}%,content.like.%${search}%`)
     .order('created_at', { ascending: false }) // 최신순으로 불러오기
     .range((page - 1) * pageSize, page * pageSize - 1);
 
