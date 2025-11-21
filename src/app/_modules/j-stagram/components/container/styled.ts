@@ -5,6 +5,7 @@ export const JStagramContainer = styled.div`
   width: 100%;
   min-height: 100dvh;
   padding-left: 9rem;
+  background-color: #f5f5f5;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
     padding-left: 0;

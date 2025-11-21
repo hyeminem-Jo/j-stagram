@@ -27,6 +27,13 @@ export type PostWithImages = {
   } | null;
 };
 
+export type PostsWithPagination = {
+  posts: PostWithImages[] | null;
+  page: number | null;
+  pageSize: number | null;
+  hasNextPage: boolean;
+};
+
 // 사용자 정보 매핑
 async function getUsersMap() {
   const supabaseAdmin = await createServerSupabaseAdminClient();
@@ -56,10 +63,18 @@ async function mapPostsWithUserInfo(posts: any[]): Promise<PostWithImages[]> {
   }));
 }
 
-export async function getPosts({ searchInput = '' }): Promise<PostWithImages[]> {
+export async function getPosts(
+  search: string = '',
+  page: number = 1,
+  pageSize: number = 10,
+): Promise<PostsWithPagination> {
   const supabase = await createServerSupabaseClient();
 
-  const { data: posts, error } = await supabase
+  const {
+    data: posts,
+    count,
+    error,
+  } = await supabase
     .from('posts')
     .select(
       `
@@ -71,14 +86,33 @@ export async function getPosts({ searchInput = '' }): Promise<PostWithImages[]> 
       like_count,
       images (id, url)
     `,
+      { count: 'exact' },
     ) // posts + 연결된 images 배열 가져오기
     .eq('is_public', true)
-    .like('title', `%${searchInput}%`)
-    .order('created_at', { ascending: false }); // 최신순으로 불러오기
+    .like('title', `%${search}%`)
+    .order('created_at', { ascending: false }) // 최신순으로 불러오기
+    .range((page - 1) * pageSize, page * pageSize - 1);
 
-  if (error) handleError(error);
+  const hasNextPage = count > page * pageSize;
 
-  return await mapPostsWithUserInfo(posts);
+  // if (error) handleError(error);
+  if (error) {
+    console.error(error);
+    return {
+      posts: [],
+      page: null, // hasNextPage 계산을 위해 페이지 번호를 null로 설정
+      // (hasNextPage 가 계속 true 로 유지되어 무한 스크롤 발생 이슈 해결)
+      pageSize: null,
+      hasNextPage: false,
+    };
+  }
+
+  return {
+    posts: await mapPostsWithUserInfo(posts),
+    page, // 현재 페이지
+    pageSize,
+    hasNextPage,
+  };
 }
 
 export async function createPost(post: PostRowInsert) {

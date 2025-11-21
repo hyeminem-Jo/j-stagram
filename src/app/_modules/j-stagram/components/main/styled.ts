@@ -3,7 +3,7 @@ import { BREAKPOINT_SM } from '@/app/_modules/common/constant/breakpoint';
 
 export const JStagramMainContainer = styled.div`
   padding: 5rem 0 10rem;
-  background-color: #f0f0f0;
+  background-color: #f5f5f5;
 
   @media (max-width: ${BREAKPOINT_SM}px) {
     padding: 2rem 0 6rem;
