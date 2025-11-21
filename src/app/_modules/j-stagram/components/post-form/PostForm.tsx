@@ -7,12 +7,11 @@ import { useAtom } from 'jotai';
 import {
   createPost,
   createPostImages,
-  getPosts,
   PostWithImages,
   updatePost,
   deleteImage,
 } from 'actions/postsActions';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -78,12 +77,6 @@ const PostForm = ({
     }
   }, [editMode, post, reset]);
 
-  const postsQuery = useQuery({
-    queryKey: ['posts'],
-    queryFn: () => getPosts({}),
-    enabled: !editMode, // 수정 모드일 때는 쿼리 비활성화
-  });
-
   // API Route로 파일 업로드
   const handleUpload = async (formData: FormData) => {
     const res = await fetch('/api/upload', {
@@ -137,7 +130,7 @@ const PostForm = ({
           const uploadResult = await handleUpload(uploadFormData);
           if (uploadResult.result && Array.isArray(uploadResult.result)) {
             imageUrls = uploadResult.result
-              .map((item: any) => {
+              .map((item: { data?: { path?: string } }) => {
                 if (item.data?.path) {
                   return getImageUrl(item.data.path);
                 }
@@ -211,7 +204,7 @@ const PostForm = ({
           const uploadResult = await handleUpload(uploadFormData);
           if (uploadResult.result && Array.isArray(uploadResult.result)) {
             newImageUrls = uploadResult.result
-              .map((item: any) => {
+              .map((item: { data?: { path?: string } }) => {
                 if (item.data?.path) {
                   return getImageUrl(item.data.path);
                 }

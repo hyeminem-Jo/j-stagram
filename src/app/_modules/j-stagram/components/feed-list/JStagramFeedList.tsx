@@ -32,6 +32,7 @@ const JStagramFeedList = () => {
     if (inView && hasNextPage && !isFetchingNextPage && !isFetching) {
       fetchNextPage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView, hasNextPage, fetchNextPage]);
 
   return (
