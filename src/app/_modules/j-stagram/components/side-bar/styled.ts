@@ -140,7 +140,7 @@ export const SideBarProfileLink = styled(Link, {
     height: 3.6rem;
     margin: 0;
     margin-left: 0.5rem;
-    border: 1px solid #222;
+    border: 2px solid #222;
 
     i {
       font-size: 1.5rem;
