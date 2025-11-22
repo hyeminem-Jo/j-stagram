@@ -100,23 +100,27 @@ const PostForm = ({
       const contentType = res.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
         const text = await res.text();
-        console.error('Non-JSON response:', text.substring(0, 200));
-        throw new Error('서버에서 올바르지 않은 응답을 받았습니다. 잠시 후 다시 시도해주세요.');
+        throw new Error(
+          `서버에서 올바르지 않은 응답을 받았습니다. (상태: ${res.status}, 타입: ${
+            contentType || '없음'
+          })`,
+        );
       }
 
       const result = await res.json();
 
       if (!res.ok) {
         const errorMessage = result.error || `업로드 실패 (상태 코드: ${res.status})`;
-        const errorCode = result.code || 'UNKNOWN_ERROR';
-        console.error('Upload error:', { errorMessage, errorCode, result });
         throw new Error(errorMessage);
       }
 
       return result;
     } catch (error) {
-      console.error('Upload fetch error:', error);
       if (error instanceof Error) {
+        // 네트워크 에러인 경우
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          throw new Error('네트워크 연결에 문제가 있습니다. 인터넷 연결을 확인해주세요.');
+        }
         throw error;
       }
       throw new Error('파일 업로드 중 알 수 없는 오류가 발생했습니다.');
@@ -131,10 +135,15 @@ const PostForm = ({
       const validFiles: File[] = [];
       const errors: string[] = [];
 
+      // 기존 선택된 파일들의 총 크기 계산
+      const existingTotalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+      const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 4MB
+      const MAX_SINGLE_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
+
       newFiles.forEach((file) => {
-        // 파일 크기 검사 (10MB)
-        if (file.size > 10 * 1024 * 1024) {
-          errors.push(`${file.name}: 파일 크기가 10MB를 초과합니다.`);
+        // 개별 파일 크기 검사 (4MB)
+        if (file.size > MAX_SINGLE_FILE_SIZE) {
+          errors.push(`${file.name}: 파일 크기가 4MB를 초과합니다.`);
           return;
         }
 
@@ -146,6 +155,16 @@ const PostForm = ({
 
         validFiles.push(file);
       });
+
+      // 총 파일 크기 검사 (4MB)
+      const newFilesTotalSize = validFiles.reduce((sum, file) => sum + file.size, 0);
+      const totalSize = existingTotalSize + newFilesTotalSize;
+
+      if (totalSize > MAX_TOTAL_SIZE) {
+        const totalSizeMB = (totalSize / 1024 / 1024).toFixed(2);
+        errors.push(`선택한 모든 파일의 총 크기가 4MB를 초과합니다. (현재: ${totalSizeMB}MB)`);
+        validFiles.length = 0; // 모든 파일 제거
+      }
 
       // 에러가 있으면 사용자에게 알림
       if (errors.length > 0) {

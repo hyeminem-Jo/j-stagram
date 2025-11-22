@@ -24,10 +24,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 총 파일 크기 4MB 제한
+    const MAX_SINGLE_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
+
+    // 총 파일 크기 계산
+    const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+
+    // 총 파일 크기 검사 (4MB)
+    if (totalSize > MAX_TOTAL_SIZE) {
+      const totalSizeMB = (totalSize / 1024 / 1024).toFixed(2);
+      return NextResponse.json(
+        {
+          error: `선택한 모든 파일의 총 크기가 4MB를 초과합니다. (현재: ${totalSizeMB}MB)`,
+          code: 'TOTAL_SIZE_TOO_LARGE',
+        },
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
+
     // 파일 유효성 검사
     for (const file of files) {
-      // 파일 크기 제한 (10MB)
-      if (file.size > 10 * 1024 * 1024) {
+      // 개별 파일 크기 제한 (10MB)
+      if (file.size > MAX_SINGLE_FILE_SIZE) {
         return NextResponse.json(
           { error: `File ${file.name} is too large. Maximum size is 10MB`, code: 'FILE_TOO_LARGE' },
           { status: 400, headers: { 'Content-Type': 'application/json' } },
@@ -82,13 +100,11 @@ export async function POST(req: NextRequest) {
             });
 
           if (error) {
-            console.error('Supabase upload error:', error);
             throw new Error(`Upload failed for ${file.name}: ${error.message}`);
           }
 
           return { data };
         } catch (fileError) {
-          console.error('File upload error:', fileError);
           throw fileError;
         }
       }),
@@ -100,7 +116,6 @@ export async function POST(req: NextRequest) {
     );
   } catch (err: unknown) {
     const error = err as Error;
-    console.error('Upload API error:', error);
     return NextResponse.json(
       {
         error: error.message || 'An unexpected error occurred',
