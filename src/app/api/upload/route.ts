@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from 'utils/supabase/server';
 
+// API Route 설정: 요청 크기 제한 및 타임아웃 설정
+export const runtime = 'nodejs';
+export const maxDuration = 60; // 60초 타임아웃
+
 export async function POST(req: NextRequest) {
   try {
     // 환경변수 검증
@@ -24,7 +28,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 총 파일 크기 4MB 제한
+    const MAX_TOTAL_SIZE = 4 * 1024 * 1024; // 총 파일 크기 4MB 제한
     const MAX_SINGLE_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
 
     // 총 파일 크기 계산

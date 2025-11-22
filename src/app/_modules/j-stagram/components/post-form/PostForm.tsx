@@ -136,7 +136,7 @@ const PostForm = ({
 
       // 기존 선택된 파일들의 총 크기 계산
       const existingTotalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-      const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 4MB
+      const MAX_TOTAL_SIZE = 4 * 1024 * 1024; // 4MB
       const MAX_SINGLE_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
 
       newFiles.forEach((file) => {

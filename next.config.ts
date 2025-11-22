@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
       new URL('https://randomuser.me/api/portraits/med/men/**'),
     ],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '4mb', // 요청 본문 크기 제한을 4MB로 설정
+    },
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
