@@ -18,8 +18,7 @@ import { z } from 'zod';
 import ControlledTextarea from '@/app/_modules/common/components/form/controlled-textarea/ControlledTextarea';
 import ControlledInput from '@/app/_modules/common/components/form/controlled-input/ControlledInput';
 import { getImageUrl } from 'utils/supabase/storage';
-import { toSafeFileName } from 'utils/fileUtil';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { queryClient } from '@/app/config/ReactQueryProvider';
 
 const schema = z.object({
@@ -77,20 +76,89 @@ const PostForm = ({
     }
   }, [editMode, post, reset]);
 
+  // 썸네일 URL 생성 및 관리 (메모리 누수 방지)
+  const thumbnailUrls = useMemo(() => {
+    return selectedFiles.map((file) => URL.createObjectURL(file));
+  }, [selectedFiles]);
+
+  // 썸네일 URL cleanup (메모리 해제)
+  useEffect(() => {
+    return () => {
+      thumbnailUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [thumbnailUrls]);
+
   // API Route로 파일 업로드
   const handleUpload = async (formData: FormData) => {
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
-    const result = await res.json();
-    if (!res.ok) throw new Error(result.error || 'Upload failed');
-    return result;
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      // 응답이 JSON인지 확인
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error('Non-JSON response:', text.substring(0, 200));
+        throw new Error('서버에서 올바르지 않은 응답을 받았습니다. 잠시 후 다시 시도해주세요.');
+      }
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        const errorMessage = result.error || `업로드 실패 (상태 코드: ${res.status})`;
+        const errorCode = result.code || 'UNKNOWN_ERROR';
+        console.error('Upload error:', { errorMessage, errorCode, result });
+        throw new Error(errorMessage);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Upload fetch error:', error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('파일 업로드 중 알 수 없는 오류가 발생했습니다.');
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setSelectedFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
+      const newFiles = Array.from(e.target.files);
+
+      // 파일 유효성 검사
+      const validFiles: File[] = [];
+      const errors: string[] = [];
+
+      newFiles.forEach((file) => {
+        // 파일 크기 검사 (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          errors.push(`${file.name}: 파일 크기가 5MB를 초과합니다.`);
+          return;
+        }
+
+        // 파일 타입 검사
+        if (!file.type.startsWith('image/')) {
+          errors.push(`${file.name}: 이미지 파일만 업로드 가능합니다.`);
+          return;
+        }
+
+        validFiles.push(file);
+      });
+
+      // 에러가 있으면 사용자에게 알림
+      if (errors.length > 0) {
+        alert(errors.join('\n'));
+      }
+
+      // 유효한 파일만 추가
+      if (validFiles.length > 0) {
+        setSelectedFiles((prev) => [...prev, ...validFiles]);
+      }
+
+      // input 초기화
+      e.target.value = '';
     }
   };
 
@@ -98,13 +166,13 @@ const PostForm = ({
   const handleDeleteImage = (imageId: number | undefined, imageUrl: string) => {
     if (!imageId) {
       // 새로 추가한 이미지인 경우 (아직 DB에 저장되지 않음)
-      setCurrentImages(currentImages.filter((img) => img.url !== imageUrl));
-      setSelectedFiles(
-        selectedFiles.filter((_, index) => {
-          const fileUrl = URL.createObjectURL(selectedFiles[index]);
-          return fileUrl !== imageUrl;
-        }),
-      );
+      const index = thumbnailUrls.findIndex((url) => url === imageUrl);
+      if (index !== -1) {
+        // URL 해제
+        URL.revokeObjectURL(thumbnailUrls[index]);
+        // 파일 제거
+        setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+      }
       return;
     }
     // 기존 이미지인 경우: 삭제 목록에 추가하고 UI에서만 제거
@@ -121,10 +189,9 @@ const PostForm = ({
         setIsUploading(true);
         try {
           const uploadFormData = new FormData();
+          // 서버에서 고유한 파일명을 생성하므로 원본 파일명 사용
           selectedFiles.forEach((file) => {
-            const safeName = toSafeFileName(file.name);
-            const safeFile = new File([file], safeName, { type: file.type });
-            uploadFormData.append('file', safeFile);
+            uploadFormData.append('file', file);
           });
 
           const uploadResult = await handleUpload(uploadFormData);
@@ -165,6 +232,8 @@ const PostForm = ({
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['userPosts'] });
       reset();
+      // 썸네일 URL 해제
+      thumbnailUrls.forEach((url) => URL.revokeObjectURL(url));
       setSelectedFiles([]);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -176,6 +245,12 @@ const PostForm = ({
     },
     onError: (error: Error) => {
       setIsUploading(false); // 에러 발생 시에도 업로드 상태 초기화
+      // 업로드 실패 시 썸네일 URL 해제 및 상태 롤백
+      thumbnailUrls.forEach((url) => URL.revokeObjectURL(url));
+      setSelectedFiles([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       alert(error.message);
     },
     onSettled: () => {
@@ -195,10 +270,9 @@ const PostForm = ({
         setIsUploading(true);
         try {
           const uploadFormData = new FormData();
+          // 서버에서 고유한 파일명을 생성하므로 원본 파일명 사용
           selectedFiles.forEach((file) => {
-            const safeName = toSafeFileName(file.name);
-            const safeFile = new File([file], safeName, { type: file.type });
-            uploadFormData.append('file', safeFile);
+            uploadFormData.append('file', file);
           });
 
           const uploadResult = await handleUpload(uploadFormData);
@@ -246,6 +320,8 @@ const PostForm = ({
         queryClient.invalidateQueries({ queryKey: ['post', post.id] });
       }
       reset();
+      // 썸네일 URL 해제
+      thumbnailUrls.forEach((url) => URL.revokeObjectURL(url));
       setSelectedFiles([]);
       setDeletedImageIds([]); // 삭제 목록 초기화
       setCurrentImages(post?.images || []);
@@ -256,6 +332,12 @@ const PostForm = ({
     },
     onError: (error: Error) => {
       setIsUploading(false); // 에러 발생 시에도 업로드 상태 초기화
+      // 업로드 실패 시 썸네일 URL 해제 및 상태 롤백
+      thumbnailUrls.forEach((url) => URL.revokeObjectURL(url));
+      setSelectedFiles([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       alert(error.message);
     },
     onSettled: () => {
@@ -325,10 +407,13 @@ const PostForm = ({
           {/* 새로 선택한 이미지 */}
           {selectedFiles.map((file, index) => (
             <S.ImageThumbnail key={`new-${index}`}>
-              <S.ThumbnailImage src={URL.createObjectURL(file)} alt='새 이미지' />
+              <S.ThumbnailImage src={thumbnailUrls[index]} alt='새 이미지' />
               <S.ThumbnailDeleteButton
                 type='button'
                 onClick={() => {
+                  // URL 해제
+                  URL.revokeObjectURL(thumbnailUrls[index]);
+                  // 파일 제거
                   setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
                 }}
                 aria-label='이미지 제거'
