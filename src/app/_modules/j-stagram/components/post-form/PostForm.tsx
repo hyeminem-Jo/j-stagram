@@ -99,7 +99,6 @@ const PostForm = ({
       // 응답이 JSON인지 확인
       const contentType = res.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        const text = await res.text();
         throw new Error(
           `서버에서 올바르지 않은 응답을 받았습니다. (상태: ${res.status}, 타입: ${
             contentType || '없음'
