@@ -26,10 +26,10 @@ export async function POST(req: NextRequest) {
 
     // 파일 유효성 검사
     for (const file of files) {
-      // 파일 크기 제한 (5MB)
-      if (file.size > 5 * 1024 * 1024) {
+      // 파일 크기 제한 (10MB)
+      if (file.size > 10 * 1024 * 1024) {
         return NextResponse.json(
-          { error: `File ${file.name} is too large. Maximum size is 5MB`, code: 'FILE_TOO_LARGE' },
+          { error: `File ${file.name} is too large. Maximum size is 10MB`, code: 'FILE_TOO_LARGE' },
           { status: 400, headers: { 'Content-Type': 'application/json' } },
         );
       }
@@ -59,12 +59,19 @@ export async function POST(req: NextRequest) {
           // 고유한 파일명 생성 (타임스탬프 + 랜덤 문자열)
           const timestamp = Date.now();
           const randomStr = Math.random().toString(36).substring(2, 8);
-          const fileExt = file.name.split('.').pop() || '';
-          // 파일명에서 특수문자 제거
-          const safeBaseName = file.name
-            .replace(/\.[^/.]+$/, '')
-            .replace(/[^a-zA-Z0-9-_]/g, '_')
+          const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+
+          // 파일명에서 특수문자 제거 및 안전한 파일명 생성
+          let safeBaseName = file.name
+            .replace(/\.[^/.]+$/, '') // 확장자 제거
+            .replace(/[^a-zA-Z0-9-_]/g, '_') // 특수문자를 언더스코어로 변경
             .substring(0, 50); // 파일명 길이 제한
+
+          // 파일명이 빈 문자열이거나 숫자로만 되어있는 경우 처리
+          if (!safeBaseName || /^\d+$/.test(safeBaseName)) {
+            safeBaseName = `image_${timestamp}`;
+          }
+
           const uniqueFileName = `${safeBaseName}_${timestamp}_${randomStr}.${fileExt}`;
 
           const { data, error } = await supabase.storage

@@ -132,9 +132,9 @@ const PostForm = ({
       const errors: string[] = [];
 
       newFiles.forEach((file) => {
-        // 파일 크기 검사 (5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          errors.push(`${file.name}: 파일 크기가 5MB를 초과합니다.`);
+        // 파일 크기 검사 (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          errors.push(`${file.name}: 파일 크기가 10MB를 초과합니다.`);
           return;
         }
 
