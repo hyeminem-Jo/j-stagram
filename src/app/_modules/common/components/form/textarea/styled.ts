@@ -15,14 +15,13 @@ export const Textarea = styled.textarea<{
   padding: 12px 16px;
   border: 1px solid ${({ $hasError }) => ($hasError ? '#ff4757' : '#e1e5e9')};
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 16px;
   font-family: inherit;
   line-height: 1.5;
   resize: ${({ $resize }) => $resize};
   outline: none;
   transition: border-color 0.1s ease;
   background-color: #fff;
-  font-size: 15px;
 
   &:focus {
     border-color: ${({ $hasError }) => ($hasError ? '#ff4757' : '#222')};

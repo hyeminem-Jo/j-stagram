@@ -172,9 +172,9 @@ const PostForm = ({
         // 개별 파일 크기 검사 (5MB)
         if (file.size > MAX_SINGLE_FILE_SIZE) {
           errors.push(
-            `${file.name}: 개별 파일 크기를 5MB 이하로 설정해주세요. (현재: ${
-              file.size / 1024 / 1024
-            }MB)`,
+            `개별 파일 크기를 5MB 이하로 설정해주세요. (현재: ${(file.size / 1024 / 1024).toFixed(
+              2,
+            )}MB)`,
           );
           return;
         }
@@ -417,7 +417,7 @@ const PostForm = ({
         name='postInput'
         rows={4}
         control={control}
-        placeholder='오늘은 어떤 일이 있었나요? :)'
+        placeholder={`오늘은 어떤 일이 있었나요? :)`}
         error={errors.postInput}
         maxLength={500}
       />
