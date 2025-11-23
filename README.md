@@ -81,20 +81,23 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
   - 아이디, 비밀번호와 함께 비밀번호를 한 번 더 확인하는 유효성 검증을 구현하였습니다.
   
     <img width="364" height="197" alt="image" src="https://github.com/user-attachments/assets/112b590f-0f60-42c8-9cec-2a83c629ede8" />
+
+    <video src="https://github.com/user-attachments/assets/3bf4cee7-6a17-4f96-81cc-65b0ad3cc201" width="400"></video>
+
+    
  <br>
 <br>
 
 2. 게시글 기능
 
-  - 게시글 CRUD 를 구현
+  - 게시글 CRUD 구현
   - 내 게시글일 경우 홈 피드에서 직접 수정/삭제가 가능
   - `react-query` 로 5개 게시글마다 인피니트스크롤링 구현
   - 검색페이지에서 원하는 키워드를 통해 제목/내용을 찾을 수 있음
-
- <br>
  
-  <video src="https://github.com/user-attachments/assets/126b67e2-0eab-48dd-a830-f60e70fb0a28" width="400" />
-  ![Image](https://github.com/user-attachments/assets/c0cefed7-2a1a-44a0-b4f6-b1d26c8a4116)
+   <video src="https://github.com/user-attachments/assets/126b67e2-0eab-48dd-a830-f60e70fb0a28" width="400"></video>
+
+  <br>
 
   ```
   export async function sendMessage({
@@ -142,7 +145,7 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
 
  <br>
     
-  ![Image](https://github.com/user-attachments/assets/c0cefed7-2a1a-44a0-b4f6-b1d26c8a4116)
+  <video src="https://github.com/user-attachments/assets/b656d90b-109b-4e5f-9c7b-936b1da1d92b" width="400"></video>
 
   ```
   export async function sendMessage({
