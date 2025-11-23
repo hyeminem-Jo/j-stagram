@@ -18,7 +18,219 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
 
 <br>
 
-## 1. 나의 할 일(Todo-list)
+## 1. 인스타그램 클론 (J-Stagram)
+
+>회원가입 및 로그인 구현, 사용자 정보 확인, 회원끼리 실시간 채팅을 할 수 있는 기능을 구현하였습니다. [링크](https://hyejin-toy-project.vercel.app/j-stagram)
+
+<img width="925" height="496" alt="image" src="https://github.com/user-attachments/assets/346fb9e9-ddf8-4a48-af23-91b23299a09c" />
+
+
+<br>
+<br>
+
+### 주요 기능
+
+1. 회원가입
+  - Supabase Auth 를 활용하여 일반 로그인 및 카카오 소셜 로그인 기능을 구현하였습니다.
+  - 일반 회원가입의 경우 이메일로 OTP 번호를 받아 인증하는 방식으로 진행 (** supabase 의 무료 버전이라 이메일 인증 횟수 제한이 있음)
+  - `react-hook-form` 과 `zod` 를 사용하여 typescript 에 최적화된 폼 유효성 검증을 구현하였습니다.
+
+  ```
+    const signInMutation = useMutation({
+    mutationFn: async (formData: z.infer<typeof schema>) => {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (data) {
+        console.log(data, '로그인 성공');
+      }
+
+      if (error) {
+        if (error.message === 'Invalid login credentials') {
+          alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+        } else {
+          alert(error.message);
+        }
+        throw new Error(error.message);
+      }
+    },
+  });
+  ```
+
+  <img width="923" height="491" alt="image" src="https://github.com/user-attachments/assets/f5dae3d0-42fc-4df6-b752-d304327ac7b0" />
+
+
+  - signInWithOAuth 를 활용한 카카오 소셜 로그인입니다.
+ 
+    
+    ```
+      const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'kakao',
+      options: {
+        redirectTo: process.env.NEXT_PUBLIC_VERCEL_URL
+          ? `${process.env.NEXT_PUBLIC_VERCEL_URL}api/auth/callback`
+          : 'http://localhost:3000/api/auth/callback',
+      },
+    });
+    ```
+    
+    <img width="734" height="456" alt="image" src="https://github.com/user-attachments/assets/bd90be3f-eade-4aa0-8799-1eec0e11208b" />
+
+  - 아이디, 비밀번호와 함께 비밀번호를 한 번 더 확인하는 유효성 검증을 구현하였습니다.
+  
+    <img width="364" height="197" alt="image" src="https://github.com/user-attachments/assets/112b590f-0f60-42c8-9cec-2a83c629ede8" />
+ <br>
+<br>
+
+2. 게시글 기능
+
+  - 게시글 CRUD 를 구현
+  - 내 게시글일 경우 홈 피드에서 직접 수정/삭제가 가능
+  - `react-query` 로 5개 게시글마다 인피니트스크롤링 구현
+  - 검색페이지에서 원하는 키워드를 통해 제목/내용을 찾을 수 있음
+
+ <br>
+    
+  ![Image](https://github.com/user-attachments/assets/c0cefed7-2a1a-44a0-b4f6-b1d26c8a4116)
+
+  ```
+  export async function sendMessage({
+  message,
+  otherUserId,
+  }: {
+    message: string;
+    otherUserId: string;
+  }) {
+    const supabase = createBrowserSupabaseClient();
+  
+    const { data, error } = await supabase.from('message').insert({
+      message,
+      receiver: otherUserId,
+    });
+  
+    if (error) {
+      handleError(error);
+    }
+  
+    return data;
+  }
+    
+  const sendMessageMutation = useMutation({
+    mutationFn: async () => {
+      await sendMessage({ message, otherUserId: selectedChatUserId });
+    },
+    onSuccess: () => {
+      setMessage('');
+      getAllMessagesQuery.refetch();
+      inputRef.current?.focus();
+    },
+  });
+  ```
+
+<br>
+<br>
+
+3. 유저 상세페이지
+
+  - 컨텐츠를 클릭 시 상세 글 모달이 나옴  
+  - 상세 글을 모달로 띄우고, 모달에서 수정/삭제 가능
+  - 내 프로필 페이지일 경우 바로 글을 작성할 수 있음
+  - 상대 프로필 페이지일 경우 바로 메시지를 보낼 수 있음
+
+ <br>
+    
+  ![Image](https://github.com/user-attachments/assets/c0cefed7-2a1a-44a0-b4f6-b1d26c8a4116)
+
+  ```
+  export async function sendMessage({
+  message,
+  otherUserId,
+  }: {
+    message: string;
+    otherUserId: string;
+  }) {
+    const supabase = createBrowserSupabaseClient();
+  
+    const { data, error } = await supabase.from('message').insert({
+      message,
+      receiver: otherUserId,
+    });
+  
+    if (error) {
+      handleError(error);
+    }
+  
+    return data;
+  }
+    
+  const sendMessageMutation = useMutation({
+    mutationFn: async () => {
+      await sendMessage({ message, otherUserId: selectedChatUserId });
+    },
+    onSuccess: () => {
+      setMessage('');
+      getAllMessagesQuery.refetch();
+      inputRef.current?.focus();
+    },
+  });
+  ```
+
+<br>
+<br>
+
+3. 채팅 기능
+
+  - RealTime 기능을 활용하여 가입된 상대방과 실시간으로 채팅할 수 있도록 구현하였습니다.
+  - 직접 회원가입한 지인들과 채팅을 나눠보며, UX 관련 불편했던 부분을 피드백받아 발전시켰습니다.
+
+ <br>
+    
+  ![Image](https://github.com/user-attachments/assets/c0cefed7-2a1a-44a0-b4f6-b1d26c8a4116)
+
+  ```
+  export async function sendMessage({
+  message,
+  otherUserId,
+  }: {
+    message: string;
+    otherUserId: string;
+  }) {
+    const supabase = createBrowserSupabaseClient();
+  
+    const { data, error } = await supabase.from('message').insert({
+      message,
+      receiver: otherUserId,
+    });
+  
+    if (error) {
+      handleError(error);
+    }
+  
+    return data;
+  }
+    
+  const sendMessageMutation = useMutation({
+    mutationFn: async () => {
+      await sendMessage({ message, otherUserId: selectedChatUserId });
+    },
+    onSuccess: () => {
+      setMessage('');
+      getAllMessagesQuery.refetch();
+      inputRef.current?.focus();
+    },
+  });
+  ```
+
+- 사용자의 상세 정보를 알 수 있도록 표시하였습니다.
+
+  <br>
+  <br>
+
+---
+
+## 2. 나의 할 일(Todo-list)
 >가장 기초적인 CRUD 를 구현하기에 적합한 투두리스트를 구현하였습니다. [링크](https://hyejin-toy-project.vercel.app/todo)
 
 <img width="1358" height="619" alt="image" src="https://github.com/user-attachments/assets/90ea9a76-a838-4c69-ae36-729e526d3e33" />
@@ -104,117 +316,6 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
 
 <br>
 <br>
-
----
-
-## 2. 인스타그램 클론 (J-Stagram)
-
->회원가입 및 로그인 구현, 사용자 정보 확인, 회원끼리 실시간 채팅을 할 수 있는 기능을 구현하였습니다. [링크](https://hyejin-toy-project.vercel.app/j-stagram)
-
-<img width="925" height="496" alt="image" src="https://github.com/user-attachments/assets/346fb9e9-ddf8-4a48-af23-91b23299a09c" />
-
-
-<br>
-<br>
-
-### 주요 기능
-
-- Supabase Auth 를 활용하여 일반 로그인 및 카카오 소셜 로그인 기능을 구현하였습니다.
-  - 일반 회원가입의 경우 이메일로 OTP 번호를 받아 인증하는 방식으로 진행 (** supabase 의 무료 버전이라 이메일 인증 횟수 제한이 있음)
-  - `react-hook-form` 과 `zod` 를 사용하여 typescript 에 최적화된 폼 유효성 검증을 구현하였습니다.
-
-  ```
-    const signInMutation = useMutation({
-    mutationFn: async (formData: z.infer<typeof schema>) => {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (data) {
-        console.log(data, '로그인 성공');
-      }
-
-      if (error) {
-        if (error.message === 'Invalid login credentials') {
-          alert('이메일 또는 비밀번호가 올바르지 않습니다.');
-        } else {
-          alert(error.message);
-        }
-        throw new Error(error.message);
-      }
-    },
-  });
-  ```
-
-  <img width="923" height="491" alt="image" src="https://github.com/user-attachments/assets/f5dae3d0-42fc-4df6-b752-d304327ac7b0" />
-
-
-  - signInWithOAuth 를 활용한 카카오 소셜 로그인입니다.
- 
-    
-    ```
-      const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'kakao',
-      options: {
-        redirectTo: process.env.NEXT_PUBLIC_VERCEL_URL
-          ? `${process.env.NEXT_PUBLIC_VERCEL_URL}api/auth/callback`
-          : 'http://localhost:3000/api/auth/callback',
-      },
-    });
-    ```
-    
-    <img width="734" height="456" alt="image" src="https://github.com/user-attachments/assets/bd90be3f-eade-4aa0-8799-1eec0e11208b" />
-
-- Supabase 의 RealTime 기능을 활용하여 가입된 상대방과 실시간으로 채팅할 수 있도록 구현하였습니다.
-  - 직접 회원가입한 지인들과 채팅을 나눠보며, UX 관련 불편했던 부분을 피드백받아 발전시켰습니다.
-
- <br>
-    
-  ![Image](https://github.com/user-attachments/assets/c0cefed7-2a1a-44a0-b4f6-b1d26c8a4116)
-
-  ```
-  export async function sendMessage({
-  message,
-  otherUserId,
-  }: {
-    message: string;
-    otherUserId: string;
-  }) {
-    const supabase = createBrowserSupabaseClient();
-  
-    const { data, error } = await supabase.from('message').insert({
-      message,
-      receiver: otherUserId,
-    });
-  
-    if (error) {
-      handleError(error);
-    }
-  
-    return data;
-  }
-    
-  const sendMessageMutation = useMutation({
-    mutationFn: async () => {
-      await sendMessage({ message, otherUserId: selectedChatUserId });
-    },
-    onSuccess: () => {
-      setMessage('');
-      getAllMessagesQuery.refetch();
-      inputRef.current?.focus();
-    },
-  });
-  ```
-
-- 아이디, 비밀번호와 함께 비밀번호를 한 번 더 확인하는 유효성 검증을 구현하였습니다.
-  
-    <img width="364" height="197" alt="image" src="https://github.com/user-attachments/assets/112b590f-0f60-42c8-9cec-2a83c629ede8" />
-
-- 사용자의 상세 정보를 알 수 있도록 표시하였습니다.
-
-  <br>
-  <br>
 
 ---
 
