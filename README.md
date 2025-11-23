@@ -92,7 +92,8 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
   - 검색페이지에서 원하는 키워드를 통해 제목/내용을 찾을 수 있음
 
  <br>
-    
+ 
+  <video src="https://github.com/user-attachments/assets/126b67e2-0eab-48dd-a830-f60e70fb0a28" width="400" />
   ![Image](https://github.com/user-attachments/assets/c0cefed7-2a1a-44a0-b4f6-b1d26c8a4116)
 
   ```
