@@ -117,7 +117,7 @@ const PostForm = ({
         let signData;
         try {
           signData = await signRes.json();
-        } catch (parseError) {
+        } catch {
           const text = await signRes.text();
           throw new Error(`JSON 파싱 실패: ${text.substring(0, 100)}`);
         }
