@@ -88,42 +88,71 @@ const PostForm = ({
     };
   }, [thumbnailUrls]);
 
-  // API Route로 파일 업로드
-  const handleUpload = async (formData: FormData) => {
-    try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
+  // Signed URL 방식으로 파일 업로드 (Supabase Direct Upload)
+  const handleUpload = async (files: File[]): Promise<Array<{ path: string }>> => {
+    // 순차 업로드로 변경하여 JSON 파싱 에러 방지
+    const uploadResults: Array<{ path: string }> = [];
 
-      // 응답이 JSON인지 확인
-      const contentType = res.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
+    for (const file of files) {
+      try {
+        if (!file) throw new Error('파일이 없습니다.');
+
+        // 1) 서버에서 signed URL 요청
+        const signRes = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName: file.name,
+            fileType: file.type,
+          }),
+        });
+
+        // 응답이 JSON인지 확인
+        const contentType = signRes.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await signRes.text();
+          throw new Error(`서버 응답 오류 (상태: ${signRes.status}): ${text.substring(0, 100)}`);
+        }
+
+        let signData;
+        try {
+          signData = await signRes.json();
+        } catch (parseError) {
+          const text = await signRes.text();
+          throw new Error(`JSON 파싱 실패: ${text.substring(0, 100)}`);
+        }
+
+        if (!signRes.ok) {
+          throw new Error(signData.error || 'Signed URL 발급 실패');
+        }
+
+        if (!signData.signedUrl || !signData.path) {
+          throw new Error('Signed URL 또는 경로가 없습니다.');
+        }
+
+        // 2) signed URL로 직접 Supabase에 업로드
+        const uploadRes = await fetch(signData.signedUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': file.type,
+          },
+          body: file,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error(`Supabase 업로드 실패: ${uploadRes.statusText}`);
+        }
+
+        // 최종적으로 저장된 경로 반환
+        uploadResults.push({ path: signData.path });
+      } catch (err) {
         throw new Error(
-          `서버에서 올바르지 않은 응답을 받았습니다. (상태: ${res.status}, 타입: ${
-            contentType || '없음'
-          })`,
+          err instanceof Error ? `업로드 실패 (${file.name}): ${err.message}` : '업로드 실패',
         );
       }
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        const errorMessage = result.error || `업로드 실패 (상태 코드: ${res.status})`;
-        throw new Error(errorMessage);
-      }
-
-      return result;
-    } catch (error) {
-      if (error instanceof Error) {
-        // 네트워크 에러인 경우
-        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-          throw new Error('네트워크 연결에 문제가 있습니다. 인터넷 연결을 확인해주세요.');
-        }
-        throw error;
-      }
-      throw new Error('파일 업로드 중 알 수 없는 오류가 발생했습니다.');
     }
+
+    return uploadResults;
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +165,7 @@ const PostForm = ({
 
       // 기존 선택된 파일들의 총 크기 계산
       const existingTotalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-      const MAX_TOTAL_SIZE = 4 * 1024 * 1024; // 4MB
+      const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 4MB
       const MAX_SINGLE_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
 
       newFiles.forEach((file) => {
@@ -202,27 +231,19 @@ const PostForm = ({
     mutationFn: async (formData: z.infer<typeof schema>) => {
       let imageUrls: string[] = [];
 
-      // 파일이 선택된 경우 업로드
+      // 파일이 선택된 경우 Signed URL 방식으로 업로드
       if (selectedFiles.length > 0) {
         setIsUploading(true);
         try {
-          const uploadFormData = new FormData();
-          // 서버에서 고유한 파일명을 생성하므로 원본 파일명 사용
-          selectedFiles.forEach((file) => {
-            uploadFormData.append('file', file);
-          });
-
-          const uploadResult = await handleUpload(uploadFormData);
-          if (uploadResult.result && Array.isArray(uploadResult.result)) {
-            imageUrls = uploadResult.result
-              .map((item: { data?: { path?: string } }) => {
-                if (item.data?.path) {
-                  return getImageUrl(item.data.path);
-                }
-                return null;
-              })
-              .filter((url: string | null) => url !== null);
-          }
+          const uploadResults = await handleUpload(selectedFiles);
+          imageUrls = uploadResults
+            .map((result) => {
+              if (result.path) {
+                return getImageUrl(result.path);
+              }
+              return null;
+            })
+            .filter((url: string | null) => url !== null);
         } catch (err) {
           throw new Error((err as Error).message);
         } finally {
@@ -283,27 +304,19 @@ const PostForm = ({
 
       let newImageUrls: string[] = [];
 
-      // 새 파일이 선택된 경우 업로드
+      // 새 파일이 선택된 경우 Signed URL 방식으로 업로드
       if (selectedFiles.length > 0) {
         setIsUploading(true);
         try {
-          const uploadFormData = new FormData();
-          // 서버에서 고유한 파일명을 생성하므로 원본 파일명 사용
-          selectedFiles.forEach((file) => {
-            uploadFormData.append('file', file);
-          });
-
-          const uploadResult = await handleUpload(uploadFormData);
-          if (uploadResult.result && Array.isArray(uploadResult.result)) {
-            newImageUrls = uploadResult.result
-              .map((item: { data?: { path?: string } }) => {
-                if (item.data?.path) {
-                  return getImageUrl(item.data.path);
-                }
-                return null;
-              })
-              .filter((url: string | null) => url !== null);
-          }
+          const uploadResults = await handleUpload(selectedFiles);
+          newImageUrls = uploadResults
+            .map((result) => {
+              if (result.path) {
+                return getImageUrl(result.path);
+              }
+              return null;
+            })
+            .filter((url: string | null) => url !== null);
         } catch (err) {
           throw new Error((err as Error).message);
         } finally {
