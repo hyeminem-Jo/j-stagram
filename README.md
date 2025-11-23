@@ -97,89 +97,196 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
   - 이미지 업로드의 경우 서버를 거치지 않고 클라이언트가 직접 스토리지로 전송하는 Signed URL 방식을 사용 -> 업로드 성능 및 확장성 개선
  
    <video src="https://github.com/user-attachments/assets/126b67e2-0eab-48dd-a830-f60e70fb0a28" width="400"></video>
-
   <br>
+  
+  📄 PostForm.tsx
 
   ```
-  export async function sendMessage({
-  message,
-  otherUserId,
-  }: {
-    message: string;
-    otherUserId: string;
-  }) {
-    const supabase = createBrowserSupabaseClient();
-  
-    const { data, error } = await supabase.from('message').insert({
-      message,
-      receiver: otherUserId,
-    });
-  
-    if (error) {
-      handleError(error);
+...
+import { createPost, createPostImages } from 'actions/postsActions';
+const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+...
+// Signed URL 방식으로 파일 업로드 (Supabase Direct Upload)
+  const handleUpload = async (files: File[]): Promise<Array<{ path: string }>> => {
+    const uploadResults: Array<{ path: string }> = [];
+
+    for (const file of files) {
+      try {
+        if (!file) throw new Error('파일이 없습니다.');
+
+        // 1) 서버에서 signed URL 요청
+        const signRes = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName: file.name,
+            fileType: file.type,
+          }),
+        });
+
+        // 응답이 JSON인지 확인
+        const contentType = signRes.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await signRes.text();
+          throw new Error(`서버 응답 오류 (상태: ${signRes.status}): ${text.substring(0, 100)}`);
+        }
+
+        let signData;
+        try {
+          signData = await signRes.json();
+        } catch {
+          const text = await signRes.text();
+          throw new Error(`JSON 파싱 실패: ${text.substring(0, 100)}`);
+        }
+
+        if (!signRes.ok) {
+          throw new Error(signData.error || 'Signed URL 발급 실패');
+        }
+
+        if (!signData.signedUrl || !signData.path) {
+          throw new Error('Signed URL 또는 경로가 없습니다.');
+        }
+
+        // 2) signed URL로 직접 Supabase에 업로드
+        const uploadRes = await fetch(signData.signedUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': file.type,
+          },
+          body: file,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error(`Supabase 업로드 실패: ${uploadRes.statusText}`);
+        }
+
+        uploadResults.push({ path: signData.path });
+      } catch (err) {
+        throw new Error(
+          err instanceof Error ? `업로드 실패 (${file.name}): ${err.message}` : '업로드 실패',
+        );
+      }
     }
-  
-    return data;
-  }
-    
-  const sendMessageMutation = useMutation({
-    mutationFn: async () => {
-      await sendMessage({ message, otherUserId: selectedChatUserId });
+
+    return uploadResults;
+  };
+
+  const createPostMutation = useMutation({
+    mutationFn: async (formData: z.infer<typeof schema>) => {
+      let imageUrls: string[] = [];
+
+      // 파일이 선택된 경우 업로드
+      if (selectedFiles.length > 0) {
+        setIsUploading(true);
+        try {
+          const uploadResults = await handleUpload(selectedFiles);
+          imageUrls = uploadResults
+            .map((result) => {
+              if (result.path) {
+                return getImageUrl(result.path);
+              }
+              return null;
+            })
+            .filter((url: string | null) => url !== null);
+        } catch (err) {
+          throw new Error((err as Error).message);
+        } finally {
+          setIsUploading(false);
+        }
+      }
+
+      // 게시글 생성
+      const newPost = await createPost({
+        title: formData.title,
+        content: formData.postInput,
+        is_public: true,
+        user_id: myInfo.id,
+      });
+
+      // 이미지가 있으면 images 테이블에 추가
+      if (imageUrls.length > 0 && newPost.id) {
+        await createPostImages(newPost.id, imageUrls);
+      }
+
+      return newPost;
     },
-    onSuccess: () => {
-      setMessage('');
-      getAllMessagesQuery.refetch();
-      inputRef.current?.focus();
+    onSuccess: (newPost) => {
+      setIsUploading(false); // 업로드 상태 초기화
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['userPosts'] });
+      reset();
+      
+      thumbnailUrls.forEach((url) => URL.revokeObjectURL(url));
+      setSelectedFiles([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      
+      if (newPost?.id) {
+        onSuccess?.(newPost.id);
+      }
+    },
+    onError: (error: Error) => {
+      setIsUploading(false);
+      // 업로드 실패 시 썸네일 URL 해제 및 상태 롤백
+      thumbnailUrls.forEach((url) => URL.revokeObjectURL(url));
+      setSelectedFiles([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      alert(error.message);
+    },
+    onSettled: () => {
+      onPendingChange?.(false);
     },
   });
+...
   ```
-
-<br>
 <br>
 
-3. 유저 상세페이지
+### 3. 유저 상세페이지
 
-  - 컨텐츠를 클릭 시 상세 글 모달이 나옴  
-  - 상세 글을 모달로 띄우고, 모달에서 수정/삭제 가능
-  - 내 프로필 페이지일 경우 바로 글을 작성할 수 있음
-  - 상대 프로필 페이지일 경우 바로 메시지를 보낼 수 있음
+  - 컨텐츠 클릭 시 상세 글 모달 표시
+  - 모달에서 바로 게시글 수정/삭제 가능
+  - 내 프로필일 경우 바로 새 글 작성 가능
+  - 다른 유저 프로필일 경우 메시지 전송 기능 제공
 
  <br>
     
   <video src="https://github.com/user-attachments/assets/b656d90b-109b-4e5f-9c7b-936b1da1d92b" width="400"></video>
+   <br>
+  
+  📄 UserPage.tsx
 
   ```
-  export async function sendMessage({
-  message,
-  otherUserId,
-  }: {
-    message: string;
-    otherUserId: string;
-  }) {
-    const supabase = createBrowserSupabaseClient();
-  
-    const { data, error } = await supabase.from('message').insert({
-      message,
-      receiver: otherUserId,
-    });
-  
-    if (error) {
-      handleError(error);
-    }
-  
-    return data;
-  }
-    
-  const sendMessageMutation = useMutation({
-    mutationFn: async () => {
-      await sendMessage({ message, otherUserId: selectedChatUserId });
-    },
-    onSuccess: () => {
-      setMessage('');
-      getAllMessagesQuery.refetch();
-      inputRef.current?.focus();
-    },
+const [isModalOpen, setIsModalOpen] = useState(false);
+const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+
+...
+// 모달에서 선택된 게시글 데이터 가져오기
+  const { data: selectedPost, isLoading: isLoadingSelectedPost } = useQuery({
+    queryKey: ['post', selectedPostId],
+    queryFn: () => (selectedPostId ? getPostById(selectedPostId) : null),
+    enabled: !!selectedPostId && isModalOpen,
+    refetchOnWindowFocus: false,
   });
+
+
+  const handlePostCreated = (postId?: number) => {
+    if (postId) {
+      setSelectedPostId(postId); // 모달 내용을 상세 게시글로 변경
+      queryClient.invalidateQueries({ queryKey: ['userPosts', user.id] });
+    }
+  };
+
+  const handlePostUpdated = async () => {
+    queryClient.invalidateQueries({ queryKey: ['userPosts', user.id] });
+    if (selectedPostId) {
+      queryClient.invalidateQueries({ queryKey: ['post', selectedPostId] });
+    }
+  };
+...
   ```
 
 <br>
