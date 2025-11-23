@@ -165,32 +165,36 @@ const PostForm = ({
 
       // 기존 선택된 파일들의 총 크기 계산
       const existingTotalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-      const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 4MB
-      const MAX_SINGLE_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
+      const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10MB
+      const MAX_SINGLE_FILE_SIZE = 5 * 1024 * 1024; // 개별 파일 5MB 제한
 
       newFiles.forEach((file) => {
-        // 개별 파일 크기 검사 (4MB)
+        // 개별 파일 크기 검사 (5MB)
         if (file.size > MAX_SINGLE_FILE_SIZE) {
-          errors.push(`${file.name}: 파일 크기가 4MB를 초과합니다.`);
+          errors.push(
+            `${file.name}: 개별 파일 크기를 5MB 이하로 설정해주세요. (현재: ${
+              file.size / 1024 / 1024
+            }MB)`,
+          );
           return;
         }
 
         // 파일 타입 검사
         if (!file.type.startsWith('image/')) {
-          errors.push(`${file.name}: 이미지 파일만 업로드 가능합니다.`);
+          errors.push(`${file.name}: 이미지 파일만 업로드 가능합니다. (현재: ${file.type}).`);
           return;
         }
 
         validFiles.push(file);
       });
 
-      // 총 파일 크기 검사 (4MB)
+      // 총 파일 크기 검사 (10MB)
       const newFilesTotalSize = validFiles.reduce((sum, file) => sum + file.size, 0);
       const totalSize = existingTotalSize + newFilesTotalSize;
 
       if (totalSize > MAX_TOTAL_SIZE) {
         const totalSizeMB = (totalSize / 1024 / 1024).toFixed(2);
-        errors.push(`선택한 모든 파일의 총 크기가 4MB를 초과합니다. (현재: ${totalSizeMB}MB)`);
+        errors.push(`선택한 모든 파일의 총 크기가 10MB를 초과합니다. (현재: ${totalSizeMB}MB)`);
         validFiles.length = 0; // 모든 파일 제거
       }
 
