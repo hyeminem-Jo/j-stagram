@@ -85,7 +85,7 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
 
   - 아이디, 비밀번호와 함께 비밀번호를 한 번 더 확인하는 유효성 검증을 구현
   
-    <img width="364" height="197" alt="image" src="https://github.com/user-attachments/assets/112b590f-0f60-42c8-9cec-2a83c629ede8" />
+    <img width="364" height="197" alt="Image" src="https://github.com/user-attachments/assets/374fd62e-d19b-4dfa-9bdd-5408fce72ae1" />
 
     <video src="https://github.com/user-attachments/assets/3bf4cee7-6a17-4f96-81cc-65b0ad3cc201" width="400"></video>
 
@@ -308,7 +308,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
  <br>
     
-  ![Image](https://github.com/user-attachments/assets/c0cefed7-2a1a-44a0-b4f6-b1d26c8a4116)
+  ![Image](https://github.com/user-attachments/assets/f47ea7ec-d764-4e29-b151-2f77573a229b)
 
   📄 MessageScreen.tsx
   <br>
