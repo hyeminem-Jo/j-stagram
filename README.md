@@ -1,8 +1,8 @@
-# Toy Project
+# 서비스에 대하여
 
 >여러 최신 스택들을 활용하여 토이 프로젝트를 구현하였습니다. 
-나의 할 일 / 인스타그램 클론 / 넷플릭스 클론 / 파일 업로드 기능을 담고 있으며,
-모바일 웹 환경을 고려하여 작업하였습니다.
+나의 할 일 / 넷플릭스 클론 / 파일 업로드 기능들을 바탕으로 J-Stagram 이라는 sns 서비스를 최종적으로 산출해냈으며,
+모든 작업을 반응형으로 작업하였습니다.
 
 
 <br>
@@ -18,11 +18,12 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
 
 <br>
 
-# 1. 인스타그램 클론 (J-Stagram)
+# J-Stagram
 
->회원가입 및 로그인 구현, 게시글 CRUD, 유저 상세페이지 기능, 회원끼리 실시간 채팅을 할 수 있는 기능을 구현 [링크](https://hyejin-toy-project.vercel.app/j-stagram)
+> J-Stagram 은 인스타그램을 참고한 sns 서비스로, 반응형 웹으로 제작되었습니다. 
+회원가입 및 로그인 구현, 게시글 CRUD, 유저 상세페이지 기능, 회원끼리 실시간 채팅을 할 수 있는 기능을 구현하였습니다. [링크](https://hyejin-toy-project.vercel.app/j-stagram)
 
-<img width="925" height="496" alt="image" src="https://github.com/user-attachments/assets/346fb9e9-ddf8-4a48-af23-91b23299a09c" />
+<img width="1140" height="639" alt="Image" src="https://github.com/user-attachments/assets/2eeac920-966e-4de2-abd2-e131194f6f08" />
 
 
 <br>
@@ -349,7 +350,9 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
 ---
 
-# 2. 나의 할 일(Todo-list)
+# Side Project
+
+## 2. 나의 할 일(Todo-list)
 >가장 기초적인 CRUD 를 구현하기에 적합한 투두리스트를 구현 [링크](https://hyejin-toy-project.vercel.app/todo)
 
 <img width="1358" height="619" alt="image" src="https://github.com/user-attachments/assets/90ea9a76-a838-4c69-ae36-729e526d3e33" />
@@ -357,7 +360,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 <br>
 <br>
 
-## 주요 기능
+### 주요 기능
 
 - 할 일 등록/수정/삭제가 가능하며, 완료 여부를 체크할 수 있도록 구현
 - 할 일을 검색하는 기능을 구현
@@ -438,7 +441,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
 ---
 
-# 3. 파일 업로드 (Gallery)
+## 3. 파일 업로드 (Gallery)
 >Supabase 의 Storage 기능을 활용해 파일을 업로드 및 삭제할 수 있는 기능 구현 [링크](https://hyejin-toy-project.vercel.app/gallery)
 
 <img width="1357" height="764" alt="image" src="https://github.com/user-attachments/assets/a42592d0-3ea5-4902-ba4c-7bad04a3c7e5" />
@@ -447,7 +450,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 <br>
 <br>
 
-## 주요 기능
+### 주요 기능
 
 - 업로드 창이 열려 이미지를 선택, react-dropzone 를 활용하여 드래그하여 이미지를 업로드하는 기능을 구현 (여러 이미지 업로드 가능)
 
@@ -494,7 +497,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 ---
 
 
-# 4. 넷플릭스 클론
+## 4. 넷플릭스 클론
 >영화를 검색할 수 있는 넷플릭스 클론 사이트를 구현 [링크](https://hyejin-toy-project.vercel.app/movie)
 
 <img width="1453" height="722" alt="image" src="https://github.com/user-attachments/assets/cbce361f-18da-4a9a-9798-4949b2577d02" />
@@ -504,7 +507,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 <br>
 <br>
 
-## 주요 기능
+### 주요 기능
 
 - `react-query` 의 `useInfiniteQuery` 와 `useInView` 를 활용하여, 스크롤이 밑에 다다르면 추가적으로 영화 목록이 생기도록 인피니트 스크롤을 구현
 
