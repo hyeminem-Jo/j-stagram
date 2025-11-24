@@ -81,7 +81,7 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
     });
     ```
     
-    <img width="734" height="456" alt="image" src="https://github.com/user-attachments/assets/bd90be3f-eade-4aa0-8799-1eec0e11208b" />
+    <img width="734" height="456" alt="Image" src="https://github.com/user-attachments/assets/4584073f-471b-4057-9655-8a61ed71d20e" />
 
   - 아이디, 비밀번호와 함께 비밀번호를 한 번 더 확인하는 유효성 검증을 구현
   
