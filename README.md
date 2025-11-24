@@ -448,7 +448,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 ## 3. 파일 업로드 (Gallery)
 >Supabase 의 Storage 기능을 활용해 파일을 업로드 및 삭제할 수 있는 기능 구현 [링크](https://hyejin-toy-project.vercel.app/gallery)
 
-<img width="1357" height="764" alt="image" src="https://github.com/user-attachments/assets/a42592d0-3ea5-4902-ba4c-7bad04a3c7e5" />
+<img width="1357" height="764" alt="Image" src="https://github.com/user-attachments/assets/a322896e-0721-4622-9962-12e0d49fd064" />
 
 
 <br>
@@ -458,7 +458,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
 - 업로드 창이 열려 이미지를 선택, react-dropzone 를 활용하여 드래그하여 이미지를 업로드하는 기능을 구현 (여러 이미지 업로드 가능)
 
-  <img width="745" height="454" alt="image" src="https://github.com/user-attachments/assets/a76e324a-2d29-464a-a09d-325115ce3763" />
+  <img width="745" height="454" alt="Image" src="https://github.com/user-attachments/assets/57449a0f-66c2-4bb3-9c4e-3718a96b1f9d" />
 
 ```
   const handleUpload = async (formData: FormData) => {
@@ -504,7 +504,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 ## 4. 넷플릭스 클론
 >영화를 검색할 수 있는 넷플릭스 클론 사이트를 구현 [링크](https://hyejin-toy-project.vercel.app/movie)
 
-<img width="1453" height="722" alt="image" src="https://github.com/user-attachments/assets/cbce361f-18da-4a9a-9798-4949b2577d02" />
+<img width="1453" height="722" alt="Image" src="https://github.com/user-attachments/assets/0b112f46-ade0-4680-b1b6-9c109b1cfb02" />
 
 
 
@@ -538,16 +538,16 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
     }, [inView, hasNextPage, fetchNextPage]);
   ```
 
-  <img width="1197" height="662" alt="image" src="https://github.com/user-attachments/assets/db0bb4a5-f21f-439f-87ce-a8d3a5a4090a" />
+  <img width="1197" height="662" alt="Image" src="https://github.com/user-attachments/assets/3f4f5d97-6022-4edc-8c0d-21ca6f72ca1a" />
 
   
     
 - 동적 라우팅을 활용하여 영화 상세페이지를 구현하였습니다.
 
-  <img width="693" height="475" alt="image" src="https://github.com/user-attachments/assets/3ee65df2-820d-42df-8739-eb2ff9c13234" />
+  <img width="693" height="475" alt="Image" src="https://github.com/user-attachments/assets/fcea6063-95b0-40c2-899a-152a2bbebace" />
 
 
-  <img width="1253" height="666" alt="image" src="https://github.com/user-attachments/assets/a4a09a71-c744-4831-86a4-5dc3d37b6211" />
+  <img width="1253" height="666" alt="Image" src="https://github.com/user-attachments/assets/a687d434-96f2-4f00-a979-809aa0e233d9" />
 
 
   
