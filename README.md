@@ -20,7 +20,7 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
 
 # 1. 인스타그램 클론 (J-Stagram)
 
->회원가입 및 로그인 구현, 사용자 정보 확인, 회원끼리 실시간 채팅을 할 수 있는 기능을 구현하였습니다. [링크](https://hyejin-toy-project.vercel.app/j-stagram)
+>회원가입 및 로그인 구현, 게시글 CRUD, 유저 상세페이지 기능, 회원끼리 실시간 채팅을 할 수 있는 기능을 구현 [링크](https://hyejin-toy-project.vercel.app/j-stagram)
 
 <img width="925" height="496" alt="image" src="https://github.com/user-attachments/assets/346fb9e9-ddf8-4a48-af23-91b23299a09c" />
 
@@ -31,9 +31,9 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
 ## 주요 기능
 
 ### 1. 회원가입
-  - Supabase Auth 를 활용하여 일반 로그인 및 카카오 소셜 로그인 기능을 구현하였습니다.
+  - Supabase Auth 를 활용하여 일반 로그인 및 카카오 소셜 로그인 기능을 구현
   - 일반 회원가입의 경우 이메일로 OTP 번호를 받아 인증하는 방식으로 진행 (** supabase 의 무료 버전이라 이메일 인증 횟수 제한이 있음)
-  - `react-hook-form` 과 `zod` 를 사용하여 typescript 에 최적화된 폼 유효성 검증을 구현하였습니다.
+  - `react-hook-form` 과 `zod` 를 사용하여 typescript 에 최적화된 폼 유효성 검증을 구현
 
   ```
     const signInMutation = useMutation({
@@ -62,7 +62,7 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
   <img width="923" height="491" alt="image" src="https://github.com/user-attachments/assets/f5dae3d0-42fc-4df6-b752-d304327ac7b0" />
 
 
-  - signInWithOAuth 를 활용한 카카오 소셜 로그인입니다.
+  - signInWithOAuth 를 활용한 카카오 소셜 로그인
  
     
     ```
@@ -78,7 +78,7 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
     
     <img width="734" height="456" alt="image" src="https://github.com/user-attachments/assets/bd90be3f-eade-4aa0-8799-1eec0e11208b" />
 
-  - 아이디, 비밀번호와 함께 비밀번호를 한 번 더 확인하는 유효성 검증을 구현하였습니다.
+  - 아이디, 비밀번호와 함께 비밀번호를 한 번 더 확인하는 유효성 검증을 구현
   
     <img width="364" height="197" alt="image" src="https://github.com/user-attachments/assets/112b590f-0f60-42c8-9cec-2a83c629ede8" />
 
@@ -91,9 +91,8 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
 ### 2. 게시글 기능
 
   - 게시글 CRUD 구현
-  - 내 게시글일 경우 홈 피드에서 직접 수정/삭제 가능
+  - 홈 피드에서 내 게시글일 경우 홈 피드에서 직접 수정/삭제 가능
   - `react-query` 기반으로 5개 단위 인피니트 스크롤 구현
-  - 검색 페이지에서 원하는 키워드로 제목/내용 기반 검색 기능 제공
   - 이미지 업로드의 경우 서버를 거치지 않고 클라이언트가 직접 스토리지로 전송하는 Signed URL 방식을 사용 -> 업로드 성능 및 확장성 개선
  
    <video src="https://github.com/user-attachments/assets/126b67e2-0eab-48dd-a830-f60e70fb0a28" width="400"></video>
@@ -245,7 +244,12 @@ const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   ```
 <br>
 
-### 3. 유저 상세페이지
+  - 검색 페이지에서 원하는 키워드로 제목/내용 기반 검색 기능 제공
+  <br>
+  <video src="https://github.com/user-attachments/assets/18b69d6c-0e4e-4b56-9814-854ac8fa958d" width="400"></video>
+   <br>
+
+### 3. 유저 프로필 상세페이지
 
   - 컨텐츠 클릭 시 상세 글 모달 표시
   - 모달에서 바로 게시글 수정/삭제 가능
@@ -292,14 +296,17 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 <br>
 <br>
 
-3. 채팅 기능
+### 4. 채팅 기능
 
-  - RealTime 기능을 활용하여 가입된 상대방과 실시간으로 채팅할 수 있도록 구현하였습니다.
-  - 직접 회원가입한 지인들과 채팅을 나눠보며, UX 관련 불편했던 부분을 피드백받아 발전시켰습니다.
+  - RealTime 기능을 활용하여 가입된 상대방과 실시간으로 채팅할 수 있도록 구현
+  - 직접 회원가입한 실제 지인들과 채팅을 나눠보며, UX 관련 불편했던 부분을 피드백받아 발전
 
  <br>
     
   ![Image](https://github.com/user-attachments/assets/c0cefed7-2a1a-44a0-b4f6-b1d26c8a4116)
+
+  📄 MessageScreen.tsx
+  <br>
 
   ```
   export async function sendMessage({
@@ -335,26 +342,26 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   });
   ```
 
-- 사용자의 상세 정보를 알 수 있도록 표시하였습니다.
+- 사용자의 상세 정보를 알 수 있도록 표시
 
   <br>
   <br>
 
 ---
 
-## 2. 나의 할 일(Todo-list)
->가장 기초적인 CRUD 를 구현하기에 적합한 투두리스트를 구현하였습니다. [링크](https://hyejin-toy-project.vercel.app/todo)
+# 2. 나의 할 일(Todo-list)
+>가장 기초적인 CRUD 를 구현하기에 적합한 투두리스트를 구현 [링크](https://hyejin-toy-project.vercel.app/todo)
 
 <img width="1358" height="619" alt="image" src="https://github.com/user-attachments/assets/90ea9a76-a838-4c69-ae36-729e526d3e33" />
 
 <br>
 <br>
 
-### 주요 기능
+## 주요 기능
 
-- 할 일 등록/수정/삭제가 가능하며, 완료 여부를 체크할 수 있도록 구현하였습니다.
-- 할 일을 검색하는 기능을 구현하였습니다.
-- 이미 체크된 할 일의 경우 아래로 정렬, 할 일 생성일 기준으로 오름차순 정렬 되도록 구현하였습니다.
+- 할 일 등록/수정/삭제가 가능하며, 완료 여부를 체크할 수 있도록 구현
+- 할 일을 검색하는 기능을 구현
+- 이미 체크된 할 일의 경우 아래로 정렬, 할 일 생성일 기준으로 오름차순 정렬 되도록 구현
   
   <img width="1051" height="303" alt="image" src="https://github.com/user-attachments/assets/c9243881-f828-4412-87da-c0c13f8ddd3f" />
 
@@ -373,7 +380,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
       return data;
     }
   ```
-- 마감일도 있으면 좋겠다는 생각으로 DatePicker 라는 라이브러리를 사용, 따로 다른 페이지에서도 사용하기 유용하게 커스텀 컴포넌트로 제작하였습니다.
+- 마감일도 있으면 좋겠다는 생각으로 DatePicker 라는 라이브러리를 사용, 따로 다른 페이지에서도 사용하기 유용하게 커스텀 컴포넌트로 제작
   
   <img width="405" height="369" alt="image" src="https://github.com/user-attachments/assets/a2e3fb25-8fb0-41ab-ae57-eb5992f36e5e" />
 
@@ -423,7 +430,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
     export default CustomDatePicker;
     
     ```
-- 새로 생성된 할 일인 경우 자동으로 편집 모드가 될 수 있도록 구현하였습니다.
+- 새로 생성된 할 일인 경우 자동으로 편집 모드가 될 수 있도록 구현
   <img width="1032" height="105" alt="image" src="https://github.com/user-attachments/assets/4eb80f9c-a76f-4574-9081-a4bc2636135c" />
 
 <br>
@@ -431,8 +438,8 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
 ---
 
-## 3. 파일 업로드 (Gallery)
->Supabase 의 Storage 기능을 활용해 파일을 업로드 및 삭제할 수 있는 기능을 구현했습니다. [링크](https://hyejin-toy-project.vercel.app/gallery)
+# 3. 파일 업로드 (Gallery)
+>Supabase 의 Storage 기능을 활용해 파일을 업로드 및 삭제할 수 있는 기능 구현 [링크](https://hyejin-toy-project.vercel.app/gallery)
 
 <img width="1357" height="764" alt="image" src="https://github.com/user-attachments/assets/a42592d0-3ea5-4902-ba4c-7bad04a3c7e5" />
 
@@ -440,9 +447,9 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 <br>
 <br>
 
-### 주요 기능
+## 주요 기능
 
-- 업로드 창이 열려 이미지를 선택, react-dropzone 를 활용하여 드래그하여 이미지를 업로드하는 기능을 구현하였습니다. (여러 이미지 업로드 가능)
+- 업로드 창이 열려 이미지를 선택, react-dropzone 를 활용하여 드래그하여 이미지를 업로드하는 기능을 구현 (여러 이미지 업로드 가능)
 
   <img width="745" height="454" alt="image" src="https://github.com/user-attachments/assets/a76e324a-2d29-464a-a09d-325115ce3763" />
 
@@ -459,13 +466,13 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
 ```
     
-- 이미지 호버시 업로드된 이미지를 삭제할 수 있습니다.
+- 이미지 호버시 업로드된 이미지 삭제 가능
 
   <img width="235" height="286" alt="image" src="https://github.com/user-attachments/assets/9cfff327-3d65-40f9-887a-c6d489cb1313" />
 
   
-- 이미지 이름을 검색하는 기능을 구현하였습니다.
-  - 파일 이름이 인식안되는 이슈가 있어 이미지가 업로드될 때 파일명이 한글일 경우 변환 후 타임스탬프를 추가하였습니다.
+- 이미지 이름을 검색하는 기능을 구현
+  - 파일 이름이 인식안되는 이슈가 있어 이미지가 업로드될 때 파일명이 한글일 경우 변환 후 타임스탬프를 추가
 
     ```
       const toSafeFileName = (name: string) => {
@@ -487,8 +494,8 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 ---
 
 
-## 4. 넷플릭스 클론
->영화를 검색할 수 있는 넷플릭스 클론 사이트를 구현하였습니다. [링크](https://hyejin-toy-project.vercel.app/movie)
+# 4. 넷플릭스 클론
+>영화를 검색할 수 있는 넷플릭스 클론 사이트를 구현 [링크](https://hyejin-toy-project.vercel.app/movie)
 
 <img width="1453" height="722" alt="image" src="https://github.com/user-attachments/assets/cbce361f-18da-4a9a-9798-4949b2577d02" />
 
@@ -497,9 +504,9 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 <br>
 <br>
 
-### 주요 기능
+## 주요 기능
 
-- React-Query 의 useInfiniteQuery 와 useInView 를 활용하여, 스크롤이 밑에 다다르면 추가적으로 영화 목록이 생기도록 인피니트 스크롤을 구현하였습니다.
+- `react-query` 의 `useInfiniteQuery` 와 `useInView` 를 활용하여, 스크롤이 밑에 다다르면 추가적으로 영화 목록이 생기도록 인피니트 스크롤을 구현
 
   ```
     const movieSearch = useAtomValue(movieSearchState);
@@ -548,7 +555,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
    - 등록/수정/삭제가 되는 동안 버튼을 누르면 중복 요청이 발생되어, 요청이 완료되지 않을 시 버튼 기능 disabled 처리 (+로딩중 로띠를 활용하여 UX 처리)
    - 완료된 할 일과 미완료된 할 일이 뒤섞인 부분을 supabase 정렬기능으로 분리하여 가독성을 높임
 
-2. 인스타그램 클론
+2. j-stagram (인스타그램 클론)
    - 실시간 onlineAt 데이터를 받아 현재 유저가 접속 상태인지에 대한 정보를 초록점으로 표시하여 사용자 경험 개선
    - 새로운 채팅이 발생할 때마다 맨 아래로 스크롤 되도록 인터랙션 구현
    
@@ -566,6 +573,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 - 나의 할 일 작성 후 버튼만이 아닌 엔터키를 쳐도 등록/수정이 되도록 개선
 - J-stagram 의 유저를 검색할 수 있는 기능으로 개선
 - J-stagram 의 채팅창에서 채팅 옆에 보낸 시간이 표시되도록 개선 (사용자 피드백)
+- J-stagram 의 채팅방에서 이미지를 전송할 수 있도록 개선
 - 파일 삭제시 일괄 선택으로 여러 파일을 삭제할 수 있도록 기능 개선
 - 넷플릭스 클론에서 인피니트 스크롤이 동작 시 로딩 액션이 뜰 수 있도록 개선
 
