@@ -359,7 +359,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 ## 2. 나의 할 일(Todo-list)
 >가장 기초적인 CRUD 를 구현하기에 적합한 투두리스트를 구현 [링크](https://hyejin-toy-project.vercel.app/todo)
 
-<img width="1358" height="619" alt="image" src="https://github.com/user-attachments/assets/90ea9a76-a838-4c69-ae36-729e526d3e33" />
+<img width="1358" height="619" alt="Image" src="https://github.com/user-attachments/assets/3a01e1cf-925e-42fc-b86a-4ee870cff519" />
 
 <br>
 <br>
@@ -370,7 +370,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 - 할 일을 검색하는 기능을 구현
 - 이미 체크된 할 일의 경우 아래로 정렬, 할 일 생성일 기준으로 오름차순 정렬 되도록 구현
   
-  <img width="1051" height="303" alt="image" src="https://github.com/user-attachments/assets/c9243881-f828-4412-87da-c0c13f8ddd3f" />
+  <img width="1051" height="303" alt="Image" src="https://github.com/user-attachments/assets/14b15da5-e0a2-46d7-8eae-c38766043ca6" />
 
 
   ```
@@ -389,7 +389,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   ```
 - 마감일도 있으면 좋겠다는 생각으로 DatePicker 라는 라이브러리를 사용, 따로 다른 페이지에서도 사용하기 유용하게 커스텀 컴포넌트로 제작
   
-  <img width="405" height="369" alt="image" src="https://github.com/user-attachments/assets/a2e3fb25-8fb0-41ab-ae57-eb5992f36e5e" />
+  <img width="405" height="369" alt="Image" src="https://github.com/user-attachments/assets/97435936-758f-4488-a3e3-00a357e98a34" />
 
 
     ```
@@ -438,7 +438,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
     
     ```
 - 새로 생성된 할 일인 경우 자동으로 편집 모드가 될 수 있도록 구현
-  <img width="1032" height="105" alt="image" src="https://github.com/user-attachments/assets/4eb80f9c-a76f-4574-9081-a4bc2636135c" />
+  <img width="1032" height="105" alt="Image" src="https://github.com/user-attachments/assets/8537856d-b753-4e75-816c-be49247622ec" />
 
 <br>
 <br>
