@@ -475,7 +475,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
     
 - 이미지 호버시 업로드된 이미지 삭제 가능
 
-  <img width="235" height="286" alt="image" src="https://github.com/user-attachments/assets/9cfff327-3d65-40f9-887a-c6d489cb1313" />
+  <img width="235" height="286" alt="Image" src="https://github.com/user-attachments/assets/f83d5875-0266-4b81-b4a5-fdf8b550c095" />
 
   
 - 이미지 이름을 검색하는 기능을 구현
