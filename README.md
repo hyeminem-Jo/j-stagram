@@ -64,7 +64,7 @@ firebase 와 유사하지만 SQL 기반인 점과 그 외 더 좋은 성능으�
   });
   ```
 
-  <img width="923" height="491" alt="image" src="https://github.com/user-attachments/assets/f5dae3d0-42fc-4df6-b752-d304327ac7b0" />
+  <img width="923" height="491" alt="Image" src="https://github.com/user-attachments/assets/8c61ded0-dead-4330-bd14-96a17f5cc3de" />
 
 
   - signInWithOAuth 를 활용한 카카오 소셜 로그인
