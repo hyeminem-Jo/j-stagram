@@ -4,7 +4,11 @@
 나의 할 일 / 넷플릭스 클론 / 파일 업로드 기능들을 바탕으로 J-Stagram 이라는 sns 서비스를 최종적으로 산출해냈으며,
 모든 작업을 반응형으로 작업하였습니다.
 
+<img width="1163" height="791" alt="Image" src="https://github.com/user-attachments/assets/3ace9289-b170-45b2-9bcc-6936a9ac2b9b" />
 
+<img width="1162" height="792" alt="Image" src="https://github.com/user-attachments/assets/ad5a57ad-8455-4575-9f38-7134f6ef7cf0" />
+
+<!-- <img width="1393" height="480" alt="Image" src="https://github.com/user-attachments/assets/eb6f837c-8d62-4b90-83e6-0ae83d301d27" /> -->
 <br>
 
 ### 사용된 기술
