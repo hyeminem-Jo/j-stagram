@@ -304,6 +304,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 ### 4. 채팅 기능
 
   - RealTime 기능을 활용하여 가입된 상대방과 실시간으로 채팅할 수 있도록 구현
+  - 현재 접속중 여부와 접속했던 시간을 사용자 프로필에 실시간으로 표시
   - 직접 회원가입한 실제 지인들과 채팅을 나눠보며, UX 관련 불편했던 부분을 피드백받아 발전
 
  <br>
@@ -564,7 +565,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
    - 완료된 할 일과 미완료된 할 일이 뒤섞인 부분을 supabase 정렬기능으로 분리하여 가독성을 높임
 
 2. j-stagram (인스타그램 클론)
-   - 실시간 onlineAt 데이터를 받아 현재 유저가 접속 상태인지에 대한 정보를 초록점으로 표시하여 사용자 경험 개선
+   ✅ 실시간 onlineAt 데이터를 받아 현재 유저가 접속 상태인지에 대한 정보를 초록점으로 표시하여 사용자 경험 개선
    - 새로운 채팅이 발생할 때마다 맨 아래로 스크롤 되도록 인터랙션 구현
    
 4. 파일 업로드
