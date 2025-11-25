@@ -307,8 +307,8 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   - 직접 회원가입한 실제 지인들과 채팅을 나눠보며, UX 관련 불편했던 부분을 피드백받아 발전
 
  <br>
-    
-  ![Image](https://github.com/user-attachments/assets/f47ea7ec-d764-4e29-b151-2f77573a229b)
+ 
+  <video src="https://github.com/user-attachments/assets/2241ab9c-f1ca-4b3f-aa81-3a1412d93c7b" width="400"></video>
 
   📄 MessageScreen.tsx
   <br>
@@ -346,6 +346,7 @@ const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
     },
   });
   ```
+![Image](https://github.com/user-attachments/assets/f47ea7ec-d764-4e29-b151-2f77573a229b)
 
 - 사용자의 상세 정보를 알 수 있도록 표시
 
