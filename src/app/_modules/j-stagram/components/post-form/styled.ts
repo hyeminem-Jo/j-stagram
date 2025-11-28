@@ -96,10 +96,48 @@ export const ThumbnailDeleteButton = styled.button`
   color: #ed4956;
   font-size: 1.2rem;
   transition: all 0.2s;
+  z-index: 2;
 
   &:hover {
     background: white;
     transform: scale(1.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const ImageLoadingOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  border-radius: 0.5rem;
+`;
+
+export const ImageLoadingSpinner = styled.div`
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #0095f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 

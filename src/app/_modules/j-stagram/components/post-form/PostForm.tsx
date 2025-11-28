@@ -48,6 +48,8 @@ const PostForm = ({
   const [currentImages, setCurrentImages] = useState(post?.images || []);
   const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]); // 삭제할 이미지 ID 목록
   const [isUploading, setIsUploading] = useState(false);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false); // 썸네일 프리뷰 로딩 상태
+  const [isUploadReady, setIsUploadReady] = useState(true); // 업로드 준비 완료 상태
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -87,6 +89,25 @@ const PostForm = ({
       thumbnailUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [thumbnailUrls]);
+
+  // 파일 선택 시 프리뷰 로딩 상태 관리
+  useEffect(() => {
+    if (selectedFiles.length > 0) {
+      setIsPreviewLoading(true);
+      setIsUploadReady(false);
+
+      // Blob URL 생성 완료 후 약간의 지연을 두어 렌더링 완료 보장
+      const timer = setTimeout(() => {
+        setIsPreviewLoading(false);
+        setIsUploadReady(true);
+      }, 300);
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsPreviewLoading(false);
+      setIsUploadReady(true);
+    }
+  }, [selectedFiles]);
 
   // Signed URL 방식으로 파일 업로드 (Supabase Direct Upload)
   const handleUpload = async (files: File[]): Promise<Array<{ path: string }>> => {
@@ -382,6 +403,17 @@ const PostForm = ({
   });
 
   const onSubmit = (data: z.infer<typeof schema>) => {
+    // 이미지가 선택되었지만 아직 준비되지 않았으면 업로드 차단
+    if (selectedFiles.length > 0 && !isUploadReady) {
+      alert('이미지가 준비되지 않았습니다. 잠시만 기다려주세요.');
+      return;
+    }
+
+    // 추가 안정장치: 업로드 함수에서도 확인
+    if (!isUploadReady) {
+      throw new Error('이미지가 준비되지 않았습니다.');
+    }
+
     if (editMode) {
       if (updatePostMutation.isPending || isUploading) return;
       updatePostMutation.mutate(data);
@@ -394,6 +426,9 @@ const PostForm = ({
   const isLoading = editMode
     ? updatePostMutation.isPending || isUploading
     : createPostMutation.isPending || isUploading;
+
+  // 업로드 버튼 비활성화 조건: 로딩 중이거나 프리뷰 로딩 중이거나 업로드 준비가 안됨
+  const isSubmitDisabled = isLoading || isPreviewLoading || !isUploadReady;
 
   // isPending 상태 변경 시 부모 컴포넌트에 알림
   useEffect(() => {
@@ -442,7 +477,16 @@ const PostForm = ({
           {/* 새로 선택한 이미지 */}
           {selectedFiles.map((file, index) => (
             <S.ImageThumbnail key={`new-${index}`}>
-              <S.ThumbnailImage src={thumbnailUrls[index]} alt='새 이미지' />
+              {isPreviewLoading && (
+                <S.ImageLoadingOverlay>
+                  <S.ImageLoadingSpinner />
+                </S.ImageLoadingOverlay>
+              )}
+              <S.ThumbnailImage
+                src={thumbnailUrls[index]}
+                alt='새 이미지'
+                style={{ opacity: isPreviewLoading ? 0.5 : 1 }}
+              />
               <S.ThumbnailDeleteButton
                 type='button'
                 onClick={() => {
@@ -452,6 +496,7 @@ const PostForm = ({
                   setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
                 }}
                 aria-label='이미지 제거'
+                disabled={isPreviewLoading}
               >
                 <i className='fa-solid fa-xmark'></i>
               </S.ThumbnailDeleteButton>
@@ -496,17 +541,17 @@ const PostForm = ({
             >
               취소
             </S.EditButton>
-            <S.EditButton type='submit' $variant='save' disabled={isLoading}>
-              {isLoading ? '저장 중...' : '저장'}
+            <S.EditButton type='submit' $variant='save' disabled={isSubmitDisabled}>
+              {isLoading ? '저장 중...' : isPreviewLoading ? '이미지 준비 중...' : '저장'}
             </S.EditButton>
           </S.EditButtonsContainer>
         ) : (
           <Button
             type='submit'
-            text='공유하기  '
+            text={isPreviewLoading ? '이미지 준비 중...' : '공유하기  '}
             iconName='plus'
             filled
-            disabled={isLoading}
+            disabled={isSubmitDisabled}
             loading={isLoading}
           />
         )}
