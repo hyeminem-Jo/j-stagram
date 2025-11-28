@@ -126,7 +126,6 @@ const MessageScreen = () => {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'message' },
         (payload) => {
-          // console.log('Channel data:', payload);
           if (payload.eventType === 'INSERT' && !payload.errors) {
             getAllMessagesQuery.refetch();
           }

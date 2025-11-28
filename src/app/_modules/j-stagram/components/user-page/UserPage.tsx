@@ -86,12 +86,8 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
     queryClient.invalidateQueries({ queryKey: ['userPosts', user.id] });
     if (selectedPostId) {
       queryClient.invalidateQueries({ queryKey: ['post', selectedPostId] });
-      // // 최신 데이터 다시 가져오기
-      // await refetchSelectedPost();
     }
   };
-
-  console.log('isModalPending', isModalPending);
 
   return (
     <S.UserPageContainer>
@@ -156,7 +152,6 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         isPending={isModalPending || (!!selectedPostId && isLoadingSelectedPost)}
-        // isPending={isModalPending || (!!selectedPostId && isLoadingSelectedPost) || isPostUpdating}
       >
         {selectedPostId && selectedPost ? ( // 등록된 후 게시글 상세 모달로 표시
           <JStagramFeed

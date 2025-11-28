@@ -9,7 +9,7 @@ export const MessageScreenContainer = styled.div`
 
   @media (max-width: ${BREAKPOINT_SM}px) {
     flex: initial;
-    height: calc(100dvh - 170px);
+    height: calc(100dvh - 190px);
   }
 `;
 
