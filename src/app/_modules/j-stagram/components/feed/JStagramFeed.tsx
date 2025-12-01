@@ -137,7 +137,14 @@ const JStagramFeed = ({
           <UserProfileImage user={userForProfile} size={40} mobileSize={35} />
           <S.UserInfo>
             <S.Username>{displayName}</S.Username>
-            <S.PostDate>{DateUtil.renderDateSnsType(post.created_at)}</S.PostDate>
+            <S.PostDate>
+              {DateUtil.renderDateSnsType(post.created_at)}
+              {post.is_public === false && (
+                <S.LockIcon>
+                  <i className='fa-solid fa-lock' />
+                </S.LockIcon>
+              )}
+            </S.PostDate>
           </S.UserInfo>
         </S.UserProfileSection>
         {isMyPost && (

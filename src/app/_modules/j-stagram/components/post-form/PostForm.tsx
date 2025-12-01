@@ -373,7 +373,11 @@ const PostForm = ({
     },
     onSuccess: () => {
       setIsUploading(false); // 업로드 상태 초기화
+
+      // 게시글 목록 리페치
       queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.refetchQueries({ queryKey: ['posts'] });
+
       queryClient.invalidateQueries({ queryKey: ['userPosts'] });
       if (post?.id) {
         queryClient.invalidateQueries({ queryKey: ['post', post.id] });

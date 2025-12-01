@@ -144,6 +144,20 @@ export const PostDate = styled.span`
   font-size: 1.4rem;
   color: #8e8e8e;
   line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+export const LockIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+
+  i::before {
+    color: #8e8e8e;
+  }
 `;
 
 export const FeedImageWrap = styled.div`
