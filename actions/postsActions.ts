@@ -17,6 +17,7 @@ export type PostWithImages = {
   user_id: string;
   created_at: string;
   like_count: number;
+  is_public: boolean;
   user_info?: {
     email?: string;
     user_metadata?: {
@@ -290,11 +291,11 @@ export async function getPostsByUserId(userId: string): Promise<PostWithImages[]
       user_id,
       created_at,
       like_count,
+      is_public,
       images (id, url)
     `,
     )
     .eq('user_id', userId)
-    .eq('is_public', true)
     .order('created_at', { ascending: false });
 
   if (error) handleError(error);
@@ -316,11 +317,11 @@ export async function getPostById(postId: number): Promise<PostWithImages | null
       user_id,
       created_at,
       like_count,
+      is_public,
       images (id, url)
     `,
     )
     .eq('id', postId)
-    .eq('is_public', true)
     .maybeSingle();
 
   if (error) handleError(error);

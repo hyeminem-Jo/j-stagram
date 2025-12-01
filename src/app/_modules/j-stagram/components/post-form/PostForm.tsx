@@ -31,7 +31,7 @@ interface PostFormProps {
   editMode?: boolean;
   post?: PostWithImages;
   onCancel?: () => void;
-  onSuccess?: (postId?: number) => void;
+  onSuccess?: (postId?: number, isPublic?: boolean) => void;
   onPendingChange?: (isPending: boolean) => void;
 }
 
@@ -50,6 +50,7 @@ const PostForm = ({
   const [isUploading, setIsUploading] = useState(false);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false); // 썸네일 프리뷰 로딩 상태
   const [isUploadReady, setIsUploadReady] = useState(true); // 업로드 준비 완료 상태
+  const [isPublic, setIsPublic] = useState<boolean>(post?.is_public ?? true); // 나만보기 토글 상태
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -75,6 +76,7 @@ const PostForm = ({
       });
       setCurrentImages(post.images || []);
       setDeletedImageIds([]); // 취소 시 초기화
+      setIsPublic(post.is_public ?? true); // 나만보기 상태 초기화
     }
   }, [editMode, post, reset]);
 
@@ -280,7 +282,7 @@ const PostForm = ({
       const newPost = await createPost({
         title: formData.title,
         content: formData.postInput,
-        is_public: true,
+        is_public: isPublic,
         user_id: myInfo.id,
       });
 
@@ -304,7 +306,7 @@ const PostForm = ({
       }
       // 새로 생성된 게시글 ID 전달 (newPost가 있고 id가 있는 경우에만)
       if (newPost?.id) {
-        onSuccess?.(newPost.id);
+        onSuccess?.(newPost.id, isPublic);
       }
     },
     onError: (error: Error) => {
@@ -359,6 +361,7 @@ const PostForm = ({
         id: post.id,
         title: formData.title,
         content: formData.postInput,
+        is_public: isPublic,
       });
 
       // 새 이미지 추가
@@ -457,6 +460,19 @@ const PostForm = ({
         maxLength={500}
       />
 
+      {/* 나만보기 토글 버튼 */}
+      <S.PrivacyToggleContainer>
+        <S.PrivacyToggleLabel>
+          <S.PrivacyToggleInput
+            type='checkbox'
+            checked={isPublic}
+            onChange={(e) => setIsPublic(e.target.checked)}
+            disabled={isLoading}
+          />
+          <S.PrivacyToggleText>{isPublic ? '전체 공개' : '나만 보기'}</S.PrivacyToggleText>
+        </S.PrivacyToggleLabel>
+      </S.PrivacyToggleContainer>
+
       {/* 이미지 썸네일 */}
       {(currentImages.length > 0 || selectedFiles.length > 0) && (
         <S.ImageThumbnailsContainer>
@@ -532,6 +548,7 @@ const PostForm = ({
                 setDeletedImageIds([]);
                 setSelectedFiles([]);
                 setCurrentImages(post?.images || []);
+                setIsPublic(post?.is_public ?? true);
                 if (fileInputRef.current) {
                   fileInputRef.current.value = '';
                 }

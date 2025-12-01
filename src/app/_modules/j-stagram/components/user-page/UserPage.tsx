@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import * as S from './styled';
 import { myInfoState } from '@/app/store';
 import { useAtomValue } from 'jotai';
@@ -17,14 +17,30 @@ import JStagramFeed from '@/app/_modules/j-stagram/components/feed/JStagramFeed'
 import { queryClient } from '@/app/config/ReactQueryProvider';
 import PostModal from './PostModal';
 import { createBrowserSupabaseClient } from 'utils/supabase/client';
+import { useSearchParams } from 'next/navigation';
 
 const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
   const myInfo = useAtomValue(myInfoState);
   const isMobile = useIsMobile();
+  const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [isModalPending, setIsModalPending] = useState(false);
   const supabase = createBrowserSupabaseClient();
+
+  // URL 쿼리 파라미터에서 postId 확인 (나만보기 게시글 등록 후 이동한 경우)
+  useEffect(() => {
+    const postIdFromUrl = searchParams.get('postId');
+    if (postIdFromUrl) {
+      const postId = parseInt(postIdFromUrl, 10);
+      if (!isNaN(postId)) {
+        setSelectedPostId(postId);
+        setIsModalOpen(true);
+        // URL에서 postId 제거 (브라우저 히스토리 정리)
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  }, [searchParams]);
 
   // 사용자 표시 이름 가져오기
   const getUserDisplayName = useMemo(() => {
@@ -70,9 +86,13 @@ const UserPage = ({ user }: { user: MyInfo | UserInfo }) => {
     setSelectedPostId(null);
   };
 
-  const handlePostCreated = (postId?: number) => {
+  const handlePostCreated = (postId?: number, isPublic?: boolean) => {
     if (postId) {
-      setSelectedPostId(postId); // 모달 내용을 상세 게시글로 변경
+      // 나만보기 게시글인 경우 모달을 열고 게시글 상세 표시
+      if (isPublic === false) {
+        setSelectedPostId(postId);
+        setIsModalOpen(true);
+      }
       queryClient.invalidateQueries({ queryKey: ['userPosts', user.id] });
     }
   };

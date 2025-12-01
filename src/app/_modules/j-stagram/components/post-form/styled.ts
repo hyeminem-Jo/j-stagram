@@ -180,3 +180,61 @@ export const EditButton = styled.button<{ $variant?: 'save' | 'cancel' }>`
           }
         `}
 `;
+
+export const PrivacyToggleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.8rem 0;
+`;
+
+export const PrivacyToggleLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+`;
+
+export const PrivacyToggleInput = styled.input`
+  width: 4.4rem;
+  height: 2.4rem;
+  appearance: none;
+  background-color: #dbdbdb;
+  border-radius: 1.2rem;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:checked {
+    background-color: #0095f6;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: white;
+    top: 0.2rem;
+    left: 0.2rem;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &:checked::before {
+    transform: translateX(2rem);
+  }
+`;
+
+export const PrivacyToggleText = styled.span`
+  font-size: 1.4rem;
+  color: #262626;
+  font-weight: 500;
+`;
